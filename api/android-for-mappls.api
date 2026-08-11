@@ -1,0 +1,501 @@
+public final class com.mapconductor.mappls.GeoPointKt {
+  public static final com.mappls.sdk.maps.geometry.LatLng toLatLng(com.mapconductor.core.features.GeoPoint);
+  public static final com.mapconductor.core.features.GeoPoint from(com.mapconductor.core.features.GeoPoint$Companion, com.mappls.sdk.maps.geometry.LatLng);
+  public static final com.mapconductor.core.features.GeoPoint toGeoPoint(com.mappls.sdk.maps.geometry.LatLng);
+  public static final com.mappls.sdk.geojson.Point toPoint(com.mapconductor.core.features.GeoPoint);
+  public static final com.mapconductor.core.features.GeoPoint from(com.mapconductor.core.features.GeoPoint$Companion, com.mappls.sdk.geojson.Point);
+}
+public final class com.mapconductor.mappls.GeoRectBoundsKt {
+  public static final com.mappls.sdk.maps.geometry.LatLngBounds toLatLngBounds(com.mapconductor.core.features.GeoRectBounds);
+  public static final com.mapconductor.core.features.GeoRectBounds toGeoRectBounds(com.mappls.sdk.maps.geometry.LatLngBounds);
+}
+public final class com.mapconductor.mappls.MapCameraPositionKt {
+  public static final com.mappls.sdk.maps.camera.CameraPosition toCameraPosition(com.mapconductor.core.map.MapCameraPosition);
+  public static final com.mapconductor.core.map.MapCameraPosition from(com.mapconductor.core.map.MapCameraPosition$Companion, com.mapconductor.core.map.MapCameraPositionInterface);
+  public static final com.mapconductor.core.map.MapCameraPosition toMapCameraPosition(com.mappls.sdk.maps.camera.CameraPosition);
+  public static final com.mapconductor.core.map.MapCameraPosition toMapCameraPosition(com.mappls.sdk.maps.camera.CameraPosition, java.lang.Double);
+}
+public final class com.mapconductor.mappls.MapplsCameraStateSnapshot {
+  public com.mapconductor.mappls.MapplsCameraStateSnapshot(com.mappls.sdk.maps.camera.CameraPosition, java.lang.Double);
+  public final com.mappls.sdk.maps.camera.CameraPosition getCameraPosition();
+  public final java.lang.Double getLogicalTiltHint();
+  public final com.mapconductor.core.map.MapCameraPosition toMapCameraPosition();
+  public final com.mappls.sdk.maps.camera.CameraPosition component1();
+  public final java.lang.Double component2();
+  public final com.mapconductor.mappls.MapplsCameraStateSnapshot copy(com.mappls.sdk.maps.camera.CameraPosition, java.lang.Double);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+public final class com.mapconductor.mappls.MapplsCapabilities {
+  public static final com.mapconductor.mappls.MapplsCapabilities INSTANCE;
+  public final void declare(com.mapconductor.core.map.MutableMapServiceRegistry);
+}
+public final class com.mapconductor.mappls.MapplsDesign implements com.mapconductor.mappls.MapplsMapDesignTypeInterface {
+  public static final com.mapconductor.mappls.MapplsDesign$Companion Companion;
+  public com.mapconductor.mappls.MapplsDesign(java.lang.String, java.lang.String, java.util.List<com.mapconductor.core.map.AttributionRule>);
+  public com.mapconductor.mappls.MapplsDesign(java.lang.String, java.lang.String, java.util.List, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public java.lang.String getId();
+  public java.lang.String getStyleName();
+  public java.util.List<com.mapconductor.core.map.AttributionRule> getAttributionRules();
+  public java.lang.String getValue();
+  public final java.lang.String component1();
+  public final java.lang.String component2();
+  public final java.util.List<com.mapconductor.core.map.AttributionRule> component3();
+  public final com.mapconductor.mappls.MapplsDesign copy(java.lang.String, java.lang.String, java.util.List<com.mapconductor.core.map.AttributionRule>);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+  public java.lang.Object getId();
+  public java.lang.Object getValue();
+}
+public final class com.mapconductor.mappls.MapplsDesign$Companion {
+  public final com.mapconductor.mappls.MapplsDesign getDefault();
+  public final com.mapconductor.mappls.MapplsDesign getStandardDay();
+  public final com.mapconductor.mappls.MapplsDesign getStandardNight();
+  public final com.mapconductor.mappls.MapplsDesign getGreyDay();
+}
+public final class com.mapconductor.mappls.MapplsHttpBridge {
+  public static final com.mapconductor.mappls.MapplsHttpBridge INSTANCE;
+  public final void install();
+}
+final class com.mapconductor.mappls.MapplsHttpBridge$RoutingHttpRequest implements com.mappls.sdk.maps.http.HttpRequest {
+  public void executeRequest(com.mappls.sdk.maps.http.HttpResponder, long, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean);
+  public void cancelRequest();
+}
+public interface com.mapconductor.mappls.MapplsMapDesignTypeInterface extends com.mapconductor.core.map.MapDesignTypeInterface<java.lang.String> {
+  public abstract java.lang.String getStyleName();
+}
+public final class com.mapconductor.mappls.MapplsMapDesignTypeInterface$DefaultImpls {
+  public static java.util.List<com.mapconductor.core.map.AttributionRule> getAttributionRules(com.mapconductor.mappls.MapplsMapDesignTypeInterface);
+}
+public final class com.mapconductor.mappls.MapplsMapViewHolder implements com.mapconductor.mappls.MapplsMapViewHolderInterface {
+  public com.mapconductor.mappls.MapplsMapViewHolder(com.mappls.sdk.maps.MapView, com.mappls.sdk.maps.MapplsMap);
+  public com.mappls.sdk.maps.MapView getMapView();
+  public com.mappls.sdk.maps.MapplsMap getMap();
+  public androidx.compose.ui.geometry.Offset toScreenOffset-x-9fifI(com.mapconductor.core.features.GeoPointInterface);
+  public com.mapconductor.core.features.GeoPoint fromScreenOffsetSync-k-4lQ0M(long);
+  public java.lang.Object fromScreenOffset-3MmeM6k(long, kotlin.coroutines.Continuation<? super com.mapconductor.core.features.GeoPoint>);
+  public java.lang.Object getMapView();
+  public java.lang.Object getMap();
+}
+public interface com.mapconductor.mappls.MapplsMapViewHolderInterface extends com.mapconductor.core.map.MapViewHolderInterface<com.mappls.sdk.maps.MapView, com.mappls.sdk.maps.MapplsMap> {
+}
+public final class com.mapconductor.mappls.MapplsMapViewHolderInterface$DefaultImpls {
+  public static java.lang.Object fromScreenOffset-3MmeM6k(com.mapconductor.mappls.MapplsMapViewHolderInterface, long, kotlin.coroutines.Continuation<? super com.mapconductor.core.features.GeoPoint>);
+  public static com.mapconductor.core.features.GeoPoint fromScreenOffsetSync-k-4lQ0M(com.mapconductor.mappls.MapplsMapViewHolderInterface, long);
+}
+public final class com.mapconductor.mappls.MapplsMapViewKt {
+  public static final void MapplsMapView(com.mapconductor.mappls.MapplsViewState, androidx.compose.ui.Modifier, com.mapconductor.core.marker.MarkerTilingOptions, com.mapconductor.core.map.CameraRestriction, kotlin.jvm.functions.Function2<? super android.content.Context, ? super kotlin.coroutines.Continuation<? super java.lang.Boolean>, ? extends java.lang.Object>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.map.MapViewStateInterface<?>, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.features.GeoPoint, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.features.GeoPoint, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.map.MapCameraPosition, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.map.MapCameraPosition, kotlin.Unit>, kotlin.jvm.functions.Function1<? super com.mapconductor.core.map.MapCameraPosition, kotlin.Unit>, kotlin.jvm.functions.Function3<? super com.mapconductor.mappls.MapplsMapViewScope, ? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, androidx.compose.runtime.Composer, int, int, int);
+  public static final com.mapconductor.mappls.MapplsViewController createMapplsViewController(com.mapconductor.mappls.MapplsMapViewHolderInterface, com.mapconductor.core.marker.MarkerTilingOptions, com.mapconductor.core.map.MutableMapServiceRegistry);
+  public static final com.mapconductor.mappls.marker.MapplsMarkerController getMarkerController(com.mapconductor.mappls.MapplsMapViewHolderInterface, com.mapconductor.core.marker.MarkerTilingOptions);
+  public static final com.mapconductor.mappls.polyline.MapplsPolylineController getPolylineController(com.mapconductor.mappls.MapplsMapViewHolderInterface);
+  public static final com.mapconductor.mappls.polygon.MapplsPolygonConductor getPolygonController(com.mapconductor.mappls.MapplsMapViewHolderInterface);
+  public static final com.mapconductor.mappls.circle.MapplsCircleController getCircleController(com.mapconductor.mappls.MapplsMapViewHolderInterface);
+  public static final com.mapconductor.mappls.raster.MapplsRasterLayerController getRasterLayerController(com.mapconductor.mappls.MapplsMapViewHolderInterface);
+  public static final com.mapconductor.mappls.groundimage.MapplsGroundImageController getGroundImageController(com.mapconductor.mappls.MapplsMapViewHolderInterface);
+  public static final android.app.Activity findActivity(android.content.Context);
+}
+public final class com.mapconductor.mappls.MapplsMapViewSaver extends com.mapconductor.compose.map.BaseMapViewSaver<com.mapconductor.mappls.MapplsViewState> {
+  public com.mapconductor.mappls.MapplsMapViewSaver();
+  protected void saveMapDesign(com.mapconductor.mappls.MapplsViewState, android.os.Bundle);
+  protected com.mapconductor.mappls.MapplsViewState createState(java.lang.String, android.os.Bundle, com.mapconductor.core.map.MapCameraPosition);
+  protected java.lang.String getStateId(com.mapconductor.mappls.MapplsViewState);
+  public void saveMapDesign(com.mapconductor.core.map.MapViewStateInterface, android.os.Bundle);
+  public com.mapconductor.core.map.MapViewStateInterface createState(java.lang.String, android.os.Bundle, com.mapconductor.core.map.MapCameraPosition);
+  public java.lang.String getStateId(com.mapconductor.core.map.MapViewStateInterface);
+}
+public final class com.mapconductor.mappls.MapplsMapViewScope extends com.mapconductor.compose.MapViewScope {
+  public com.mapconductor.mappls.MapplsMapViewScope();
+}
+public final class com.mapconductor.mappls.MapplsPolyUtilsKt {
+  public static final java.util.List<com.mappls.sdk.geojson.Feature> createMapplsLines-rXlOB7A(java.lang.String, java.util.List<? extends com.mapconductor.core.features.GeoPointInterface>, boolean, long, float, int);
+  public static final java.lang.String toMapplsColorString-8_81llA(long);
+  public static final java.util.List<com.mappls.sdk.geojson.Feature> createMapplsPolygons-jzV_Hc0(java.lang.String, java.util.List<? extends com.mapconductor.core.features.GeoPointInterface>, java.util.List<? extends java.util.List<? extends com.mapconductor.core.features.GeoPointInterface>>, boolean, long, int);
+}
+public final class com.mapconductor.mappls.MapplsTypeAliasKt {
+}
+public final class com.mapconductor.mappls.MapplsViewController extends com.mapconductor.core.controller.BaseMapViewController implements com.mapconductor.mappls.MapplsViewControllerInterface,com.mappls.sdk.maps.MapplsMap$OnMapClickListener,com.mappls.sdk.maps.MapplsMap$OnMapLongClickListener,com.mappls.sdk.maps.MapplsMap$OnMoveListener,com.mappls.sdk.maps.MapplsMap$OnCameraMoveListener,com.mappls.sdk.maps.MapplsMap$OnCameraIdleListener {
+  public com.mapconductor.mappls.MapplsViewController(com.mapconductor.mappls.MapplsMapViewHolderInterface, com.mapconductor.mappls.marker.MapplsMarkerController, com.mapconductor.mappls.polyline.MapplsPolylineController, com.mapconductor.mappls.polygon.MapplsPolygonConductor, com.mapconductor.mappls.groundimage.MapplsGroundImageController, com.mapconductor.mappls.circle.MapplsCircleController, com.mapconductor.mappls.raster.MapplsRasterLayerController, kotlinx.coroutines.CoroutineScope, kotlinx.coroutines.CoroutineScope);
+  public com.mapconductor.mappls.MapplsViewController(com.mapconductor.mappls.MapplsMapViewHolderInterface, com.mapconductor.mappls.marker.MapplsMarkerController, com.mapconductor.mappls.polyline.MapplsPolylineController, com.mapconductor.mappls.polygon.MapplsPolygonConductor, com.mapconductor.mappls.groundimage.MapplsGroundImageController, com.mapconductor.mappls.circle.MapplsCircleController, com.mapconductor.mappls.raster.MapplsRasterLayerController, kotlinx.coroutines.CoroutineScope, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public com.mapconductor.mappls.MapplsMapViewHolderInterface getHolder();
+  public kotlinx.coroutines.CoroutineScope getMainCoroutine();
+  public kotlinx.coroutines.CoroutineScope getDefaultCoroutine();
+  public final void setupListeners();
+  public java.lang.Object clearOverlays(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public void moveCamera(com.mapconductor.core.map.MapCameraPosition);
+  public void animateCamera(com.mapconductor.core.map.MapCameraPosition, long);
+  public void fitBounds(com.mapconductor.core.features.GeoRectBounds, int);
+  public void setCameraRestriction(com.mapconductor.core.map.CameraRestriction);
+  public void applyUISettings(com.mapconductor.core.map.MapUISettings);
+  public final com.mappls.sdk.maps.Style getStyleInstance();
+  public void setMapDesignType(com.mapconductor.mappls.MapplsMapDesignTypeInterface);
+  public final void sendInitialCameraUpdate();
+  public void setMapDesignTypeChangeListener(kotlin.jvm.functions.Function1<? super com.mapconductor.mappls.MapplsMapDesignTypeInterface, kotlin.Unit>);
+  public void setMarkerAnimationOverlayHost(com.mapconductor.core.marker.MarkerAnimationOverlayHost);
+  public java.lang.Object compositionPolygons(java.util.List<com.mapconductor.core.polygon.PolygonState>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object updatePolygon(com.mapconductor.core.polygon.PolygonState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public void setOnMarkerDragStart(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
+  public void setOnMarkerDrag(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
+  public void setOnMarkerDragEnd(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
+  public void setOnPolylineClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.polyline.PolylineEvent, kotlin.Unit>);
+  public void setOnPolygonClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.polygon.PolygonEvent, kotlin.Unit>);
+  public void setOnCircleClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.circle.CircleEvent, kotlin.Unit>);
+  public void setOnMarkerAnimateStart(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
+  public void setOnMarkerAnimateEnd(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
+  public void setOnMarkerClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.marker.MarkerState, kotlin.Unit>);
+  public void setOnGroundImageClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.groundimage.GroundImageEvent, kotlin.Unit>);
+  protected boolean dispatchMarkerTap(com.mapconductor.core.features.GeoPointInterface);
+  public boolean onMapClick(com.mappls.sdk.maps.geometry.LatLng);
+  public boolean onMapLongClick(com.mappls.sdk.maps.geometry.LatLng);
+  public void onMoveBegin(com.mappls.sdk.gestures.MoveGestureDetector);
+  public void onMove(com.mappls.sdk.gestures.MoveGestureDetector);
+  public void onMoveEnd(com.mappls.sdk.gestures.MoveGestureDetector);
+  public void onCameraMove();
+  public void onCameraIdle();
+  public final com.mapconductor.core.marker.MarkerOverlayRendererInterface<com.mappls.sdk.geojson.Feature> createMarkerRenderer(com.mapconductor.core.marker.MarkerRenderingStrategyInterface<com.mappls.sdk.geojson.Feature>);
+  public final com.mapconductor.core.marker.MarkerEventControllerInterface<com.mappls.sdk.geojson.Feature> createMarkerEventController(com.mapconductor.core.marker.StrategyMarkerController<com.mappls.sdk.geojson.Feature>, com.mapconductor.core.marker.MarkerOverlayRendererInterface<com.mappls.sdk.geojson.Feature>);
+  public final void registerMarkerEventController(com.mapconductor.core.marker.MarkerEventControllerInterface<com.mappls.sdk.geojson.Feature>);
+  public com.mapconductor.core.map.MapViewHolderInterface getHolder();
+}
+public final class com.mapconductor.mappls.MapplsViewControllerCameraKt {
+  public static final com.mapconductor.core.map.MapCameraPosition readLogicalCameraPosition(com.mapconductor.mappls.MapplsViewController);
+  public static final com.mapconductor.core.map.MapCameraPosition getMapCameraPosition(com.mapconductor.mappls.MapplsViewController, com.mapconductor.core.map.MapCameraPositionInterface);
+  public static final void handleMoveCamera(com.mapconductor.mappls.MapplsViewController, com.mapconductor.core.map.MapCameraPosition);
+  public static final void handleAnimateCamera(com.mapconductor.mappls.MapplsViewController, com.mapconductor.core.map.MapCameraPosition, long);
+  public static final void handleFitBounds(com.mapconductor.mappls.MapplsViewController, com.mapconductor.core.features.GeoRectBounds, int);
+  public static final void handleCameraRestriction(com.mapconductor.mappls.MapplsViewController, com.mapconductor.core.map.CameraRestriction);
+}
+public final class com.mapconductor.mappls.MapplsViewControllerGesturesKt {
+  public static final void installDragTouchInterceptor(com.mapconductor.mappls.MapplsViewController);
+  public static final void removeDragTouchInterceptor(com.mapconductor.mappls.MapplsViewController);
+  public static final boolean handleMapClick(com.mapconductor.mappls.MapplsViewController, com.mappls.sdk.maps.geometry.LatLng);
+  public static final boolean handleMapLongClick(com.mapconductor.mappls.MapplsViewController, com.mappls.sdk.maps.geometry.LatLng);
+  public static final void handleMoveBegin(com.mapconductor.mappls.MapplsViewController, com.mappls.sdk.gestures.MoveGestureDetector);
+  public static final void handleMove(com.mapconductor.mappls.MapplsViewController, com.mappls.sdk.gestures.MoveGestureDetector);
+  public static final void handleMoveEnd(com.mapconductor.mappls.MapplsViewController, com.mappls.sdk.gestures.MoveGestureDetector);
+}
+public interface com.mapconductor.mappls.MapplsViewControllerInterface extends com.mapconductor.core.controller.MapViewControllerInterface,com.mapconductor.core.marker.MarkerCapableInterface,com.mapconductor.core.polyline.PolylineCapableInterface,com.mapconductor.core.polygon.PolygonCapableInterface,com.mapconductor.core.circle.CircleCapableInterface,com.mapconductor.core.groundimage.GroundImageCapableInterface,com.mapconductor.core.raster.RasterLayerCapableInterface {
+  public abstract void setMapDesignType(com.mapconductor.mappls.MapplsMapDesignTypeInterface);
+  public abstract void setMapDesignTypeChangeListener(kotlin.jvm.functions.Function1<? super com.mapconductor.mappls.MapplsMapDesignTypeInterface, kotlin.Unit>);
+}
+public final class com.mapconductor.mappls.MapplsViewControllerInterface$DefaultImpls {
+  public static void setCameraRestriction(com.mapconductor.mappls.MapplsViewControllerInterface, com.mapconductor.core.map.CameraRestriction);
+  public static void applyUISettings(com.mapconductor.mappls.MapplsViewControllerInterface, com.mapconductor.core.map.MapUISettings);
+  public static void setMarkerAnimationOverlayHost(com.mapconductor.mappls.MapplsViewControllerInterface, com.mapconductor.core.marker.MarkerAnimationOverlayHost);
+}
+public final class com.mapconductor.mappls.MapplsViewControllerKt {
+}
+public final class com.mapconductor.mappls.MapplsViewControllerStyleKt {
+  public static final void ensureGeoJsonSource(com.mapconductor.mappls.MapplsViewController, com.mappls.sdk.maps.Style, java.lang.String);
+  public static final void addLayerSafely(com.mapconductor.mappls.MapplsViewController, com.mappls.sdk.maps.Style, com.mappls.sdk.maps.style.layers.Layer, java.lang.String);
+  public static final void addLayerAboveSafely(com.mapconductor.mappls.MapplsViewController, com.mappls.sdk.maps.Style, com.mappls.sdk.maps.style.layers.Layer, java.lang.String, java.lang.String);
+  public static final void setupStyle(com.mapconductor.mappls.MapplsViewController, com.mappls.sdk.maps.Style);
+  public static final void ensurePolygonZLayers(com.mapconductor.mappls.MapplsViewController, com.mappls.sdk.maps.Style);
+}
+public final class com.mapconductor.mappls.MapplsViewState extends com.mapconductor.core.map.MapViewState<com.mapconductor.mappls.MapplsMapDesignTypeInterface> implements com.mapconductor.mappls.MapplsViewStateInterface {
+  public com.mapconductor.mappls.MapplsViewState(com.mapconductor.mappls.MapplsMapDesignTypeInterface, java.lang.String, com.mapconductor.core.map.MapCameraPosition);
+  public com.mapconductor.mappls.MapplsViewState(com.mapconductor.mappls.MapplsMapDesignTypeInterface, java.lang.String, com.mapconductor.core.map.MapCameraPosition, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public java.lang.String getId();
+  public com.mapconductor.mappls.MapplsMapDesignTypeInterface getMapDesignType();
+  public void setMapDesignType(com.mapconductor.mappls.MapplsMapDesignTypeInterface);
+  public com.mapconductor.mappls.MapplsMapViewHolderInterface getMapViewHolder();
+  public java.lang.Object getMapDesignType();
+  public void setMapDesignType(java.lang.Object);
+  public com.mapconductor.core.map.MapViewHolderInterface getMapViewHolder();
+}
+public final class com.mapconductor.mappls.MapplsViewStateImplKt {
+  public static final com.mapconductor.mappls.MapplsViewState rememberMapplsMapViewState(com.mapconductor.mappls.MapplsMapDesignTypeInterface, com.mapconductor.core.map.MapCameraPositionInterface, androidx.compose.runtime.Composer, int, int);
+}
+public interface com.mapconductor.mappls.MapplsViewStateInterface extends com.mapconductor.core.map.MapViewStateInterface<com.mapconductor.mappls.MapplsMapDesignTypeInterface> {
+}
+public final class com.mapconductor.mappls.circle.MapplsCircleController extends com.mapconductor.core.circle.CircleController<com.mappls.sdk.geojson.Feature> {
+  public com.mapconductor.mappls.circle.MapplsCircleController(com.mapconductor.mappls.circle.MapplsCircleOverlayRenderer, com.mapconductor.core.circle.CircleManagerInterface<com.mappls.sdk.geojson.Feature>);
+  public com.mapconductor.mappls.circle.MapplsCircleController(com.mapconductor.mappls.circle.MapplsCircleOverlayRenderer, com.mapconductor.core.circle.CircleManagerInterface, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public com.mapconductor.mappls.circle.MapplsCircleOverlayRenderer getRenderer();
+  public com.mapconductor.core.circle.CircleOverlayRendererInterface getRenderer();
+}
+public final class com.mapconductor.mappls.circle.MapplsCircleLayer {
+  public com.mapconductor.mappls.circle.MapplsCircleLayer(java.lang.String, java.lang.String);
+  public final java.lang.String getSourceId();
+  public final java.lang.String getLayerId();
+  public final java.lang.String getStrokeLayerId();
+  public final com.mappls.sdk.maps.style.sources.GeoJsonSource getSource();
+  public final com.mappls.sdk.maps.style.layers.FillLayer getLayer();
+  public final com.mappls.sdk.maps.style.layers.LineLayer getStrokeLayer();
+  public final void draw(java.util.List<? extends com.mapconductor.core.circle.CircleEntityInterface<com.mappls.sdk.geojson.Feature>>, com.mappls.sdk.maps.Style);
+}
+public final class com.mapconductor.mappls.circle.MapplsCircleLayer$Prop {
+  public static final com.mapconductor.mappls.circle.MapplsCircleLayer$Prop INSTANCE;
+  public static final java.lang.String FILL_COLOR;
+  public static final java.lang.String STROKE_COLOR;
+  public static final java.lang.String STROKE_WIDTH;
+  public static final java.lang.String Z_INDEX;
+}
+public final class com.mapconductor.mappls.circle.MapplsCircleOverlayRenderer extends com.mapconductor.core.circle.AbstractCircleOverlayRenderer<com.mappls.sdk.geojson.Feature> {
+  public com.mapconductor.mappls.circle.MapplsCircleOverlayRenderer(com.mapconductor.mappls.circle.MapplsCircleLayer, com.mapconductor.core.circle.CircleManagerInterface<com.mappls.sdk.geojson.Feature>, com.mapconductor.mappls.MapplsMapViewHolderInterface, kotlinx.coroutines.CoroutineScope);
+  public com.mapconductor.mappls.circle.MapplsCircleOverlayRenderer(com.mapconductor.mappls.circle.MapplsCircleLayer, com.mapconductor.core.circle.CircleManagerInterface, com.mapconductor.mappls.MapplsMapViewHolderInterface, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final com.mapconductor.mappls.circle.MapplsCircleLayer getLayer();
+  public final com.mapconductor.core.circle.CircleManagerInterface<com.mappls.sdk.geojson.Feature> getCircleManager();
+  public com.mapconductor.mappls.MapplsMapViewHolderInterface getHolder();
+  public kotlinx.coroutines.CoroutineScope getCoroutine();
+  public java.lang.Object createCircle(com.mapconductor.core.circle.CircleState, kotlin.coroutines.Continuation<? super com.mappls.sdk.geojson.Feature>);
+  public java.lang.Object updateCircleProperties(com.mappls.sdk.geojson.Feature, com.mapconductor.core.circle.CircleEntityInterface<com.mappls.sdk.geojson.Feature>, com.mapconductor.core.circle.CircleEntityInterface<com.mappls.sdk.geojson.Feature>, kotlin.coroutines.Continuation<? super com.mappls.sdk.geojson.Feature>);
+  public java.lang.Object removeCircle(com.mapconductor.core.circle.CircleEntityInterface<com.mappls.sdk.geojson.Feature>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object onPostProcess(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public final void redraw();
+  public com.mapconductor.core.map.MapViewHolderInterface getHolder();
+  public java.lang.Object updateCircleProperties(java.lang.Object, com.mapconductor.core.circle.CircleEntityInterface, com.mapconductor.core.circle.CircleEntityInterface, kotlin.coroutines.Continuation);
+}
+public final class com.mapconductor.mappls.groundimage.AppliedGroundImage {
+  public com.mapconductor.mappls.groundimage.AppliedGroundImage(int, int, int);
+  public final int getBounds();
+  public final int getImage();
+  public final int getOpacity();
+  public final int component1();
+  public final int component2();
+  public final int component3();
+  public final com.mapconductor.mappls.groundimage.AppliedGroundImage copy(int, int, int);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+public final class com.mapconductor.mappls.groundimage.MapplsGroundImageController extends com.mapconductor.core.groundimage.GroundImageController<com.mapconductor.mappls.groundimage.MapplsGroundImageHandle> {
+  public com.mapconductor.mappls.groundimage.MapplsGroundImageController(com.mapconductor.core.groundimage.GroundImageManagerInterface<com.mapconductor.mappls.groundimage.MapplsGroundImageHandle>, com.mapconductor.mappls.groundimage.MapplsGroundImageOverlayRenderer);
+  public com.mapconductor.mappls.groundimage.MapplsGroundImageController(com.mapconductor.core.groundimage.GroundImageManagerInterface, com.mapconductor.mappls.groundimage.MapplsGroundImageOverlayRenderer, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final java.lang.Object reapplyStyle(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+public final class com.mapconductor.mappls.groundimage.MapplsGroundImageHandle {
+  public com.mapconductor.mappls.groundimage.MapplsGroundImageHandle(java.lang.String, java.lang.String, com.mapconductor.mappls.groundimage.AppliedGroundImage);
+  public final java.lang.String getSourceId();
+  public final java.lang.String getLayerId();
+  public final com.mapconductor.mappls.groundimage.AppliedGroundImage getApplied();
+  public final java.lang.String component1();
+  public final java.lang.String component2();
+  public final com.mapconductor.mappls.groundimage.AppliedGroundImage component3();
+  public final com.mapconductor.mappls.groundimage.MapplsGroundImageHandle copy(java.lang.String, java.lang.String, com.mapconductor.mappls.groundimage.AppliedGroundImage);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+public final class com.mapconductor.mappls.groundimage.MapplsGroundImageOverlayRenderer extends com.mapconductor.core.groundimage.AbstractGroundImageOverlayRenderer<com.mapconductor.mappls.groundimage.MapplsGroundImageHandle> {
+  public static final com.mapconductor.mappls.groundimage.MapplsGroundImageOverlayRenderer$Companion Companion;
+  public com.mapconductor.mappls.groundimage.MapplsGroundImageOverlayRenderer(com.mapconductor.mappls.MapplsMapViewHolderInterface, kotlinx.coroutines.CoroutineScope);
+  public com.mapconductor.mappls.groundimage.MapplsGroundImageOverlayRenderer(com.mapconductor.mappls.MapplsMapViewHolderInterface, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public com.mapconductor.mappls.MapplsMapViewHolderInterface getHolder();
+  public kotlinx.coroutines.CoroutineScope getCoroutine();
+  public java.lang.Object createGroundImage(com.mapconductor.core.groundimage.GroundImageState, kotlin.coroutines.Continuation<? super com.mapconductor.mappls.groundimage.MapplsGroundImageHandle>);
+  public java.lang.Object updateGroundImageProperties(com.mapconductor.mappls.groundimage.MapplsGroundImageHandle, com.mapconductor.core.groundimage.GroundImageEntityInterface<com.mapconductor.mappls.groundimage.MapplsGroundImageHandle>, com.mapconductor.core.groundimage.GroundImageEntityInterface<com.mapconductor.mappls.groundimage.MapplsGroundImageHandle>, kotlin.coroutines.Continuation<? super com.mapconductor.mappls.groundimage.MapplsGroundImageHandle>);
+  public java.lang.Object removeGroundImage(com.mapconductor.core.groundimage.GroundImageEntityInterface<com.mapconductor.mappls.groundimage.MapplsGroundImageHandle>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public com.mapconductor.core.map.MapViewHolderInterface getHolder();
+  public java.lang.Object updateGroundImageProperties(java.lang.Object, com.mapconductor.core.groundimage.GroundImageEntityInterface, com.mapconductor.core.groundimage.GroundImageEntityInterface, kotlin.coroutines.Continuation);
+}
+public final class com.mapconductor.mappls.groundimage.MapplsGroundImageOverlayRenderer$Companion {
+}
+public final class com.mapconductor.mappls.marker.MapplsMarkerController extends com.mapconductor.core.marker.AbstractMarkerController<com.mappls.sdk.geojson.Feature> implements com.mapconductor.core.controller.OnCameraChangeReceiverInterface {
+  public com.mapconductor.mappls.marker.MapplsMarkerController(com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer, com.mapconductor.core.marker.MarkerTilingOptions, kotlinx.coroutines.CoroutineScope);
+  public com.mapconductor.mappls.marker.MapplsMarkerController(com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer, com.mapconductor.core.marker.MarkerTilingOptions, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final void setRasterLayerCallback(com.mapconductor.core.marker.MarkerTileRasterLayerCallback);
+  public java.lang.Object add(java.util.List<com.mapconductor.core.marker.MarkerState>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object update(com.mapconductor.core.marker.MarkerState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object clear(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object onCameraChanged(com.mapconductor.core.map.MapCameraPosition, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public void destroy();
+  public java.lang.Object update(java.lang.Object, kotlin.coroutines.Continuation);
+}
+public final class com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer extends com.mapconductor.core.marker.AbstractMarkerOverlayRenderer<com.mapconductor.mappls.MapplsMapViewHolderInterface, com.mappls.sdk.geojson.Feature> {
+  public com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer(com.mapconductor.mappls.MapplsMapViewHolderInterface, com.mapconductor.core.marker.MarkerManager<com.mappls.sdk.geojson.Feature>, com.mapconductor.mappls.marker.MarkerLayer, com.mapconductor.mappls.marker.MarkerDragLayer, kotlinx.coroutines.CoroutineScope);
+  public com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer(com.mapconductor.mappls.MapplsMapViewHolderInterface, com.mapconductor.core.marker.MarkerManager, com.mapconductor.mappls.marker.MarkerLayer, com.mapconductor.mappls.marker.MarkerDragLayer, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final com.mapconductor.core.marker.MarkerManager<com.mappls.sdk.geojson.Feature> getMarkerManager();
+  public final com.mapconductor.mappls.marker.MarkerLayer getMarkerLayer();
+  public final com.mapconductor.mappls.marker.MarkerDragLayer getDragLayer();
+  public boolean getSupportsAnimationOverlay();
+  public final void ensureDefaultIcon(com.mappls.sdk.maps.Style);
+  public final void ensureStyleImages(com.mappls.sdk.maps.Style);
+  public void setMarkerVisible(com.mapconductor.core.marker.MarkerEntityInterface<com.mappls.sdk.geojson.Feature>, boolean);
+  public void setMarkerPosition(com.mapconductor.core.marker.MarkerEntityInterface<com.mappls.sdk.geojson.Feature>, com.mapconductor.core.features.GeoPoint);
+  public java.lang.Object onAdd(java.util.List<? extends com.mapconductor.core.marker.MarkerOverlayRendererInterface$AddParamsInterface>, kotlin.coroutines.Continuation<? super java.util.List<com.mappls.sdk.geojson.Feature>>);
+  public java.lang.Object onRemove(java.util.List<? extends com.mapconductor.core.marker.MarkerEntityInterface<com.mappls.sdk.geojson.Feature>>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public final void drawDragLayer();
+  public final void redraw();
+  public java.lang.Object onPostProcess(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object onChange(java.util.List<? extends com.mapconductor.core.marker.MarkerOverlayRendererInterface$ChangeParamsInterface<com.mappls.sdk.geojson.Feature>>, kotlin.coroutines.Continuation<? super java.util.List<com.mappls.sdk.geojson.Feature>>);
+  public void onDragSelectionChanged(com.mapconductor.core.marker.MarkerEntityInterface<com.mappls.sdk.geojson.Feature>, com.mapconductor.core.marker.MarkerEntityInterface<com.mappls.sdk.geojson.Feature>);
+  public void onDragPositionChanged(com.mapconductor.core.features.GeoPointInterface);
+}
+public final class com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer$IconAnchor {
+  public static final com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer$IconAnchor INSTANCE;
+  public static final java.lang.String CENTER;
+  public static final java.lang.String LEFT;
+  public static final java.lang.String RIGHT;
+  public static final java.lang.String BOTTOM;
+  public static final java.lang.String TOP_LEFT;
+  public static final java.lang.String TOP_RIGHT;
+  public static final java.lang.String BOTTOM_LEFT;
+  public static final java.lang.String BOTTOM_RIGHT;
+}
+public final class com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer$IconTranslateAnchor {
+  public static final com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer$IconTranslateAnchor INSTANCE;
+  public static final java.lang.String MAP;
+  public static final java.lang.String VIEWPORT;
+}
+public final class com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer$Prop {
+  public static final com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer$Prop INSTANCE;
+  public static final java.lang.String ICON_ID;
+  public static final java.lang.String DEFAULT_MARKER_ID;
+  public static final java.lang.String SCALE;
+  public static final java.lang.String ICON_ANCHOR;
+  public static final java.lang.String Z_INDEX;
+}
+public final class com.mapconductor.mappls.marker.MapplsMarkerOverlayRendererKt {
+}
+public class com.mapconductor.mappls.marker.MarkerDragLayer extends com.mapconductor.mappls.marker.MarkerLayer {
+  public com.mapconductor.mappls.marker.MarkerDragLayer(java.lang.String, java.lang.String);
+  public final com.mapconductor.core.marker.MarkerEntityInterface<com.mappls.sdk.geojson.Feature> getSelected();
+  public final void setSelected(com.mapconductor.core.marker.MarkerEntityInterface<com.mappls.sdk.geojson.Feature>);
+  public final void updatePosition(com.mapconductor.core.features.GeoPoint);
+  public final void draw(com.mappls.sdk.maps.Style);
+}
+public class com.mapconductor.mappls.marker.MarkerLayer {
+  public com.mapconductor.mappls.marker.MarkerLayer(java.lang.String, java.lang.String);
+  public java.lang.String getSourceId();
+  public java.lang.String getLayerId();
+  public final com.mappls.sdk.maps.style.layers.SymbolLayer getLayer();
+  public final com.mappls.sdk.maps.style.sources.GeoJsonSource getSource();
+  public final boolean wouldSkipDraw(java.util.List<? extends com.mapconductor.core.marker.MarkerEntityInterface<com.mappls.sdk.geojson.Feature>>);
+  public final void draw(java.util.List<? extends com.mapconductor.core.marker.MarkerEntityInterface<com.mappls.sdk.geojson.Feature>>, com.mappls.sdk.maps.Style);
+}
+public final class com.mapconductor.mappls.polygon.MapplsPolygonConductor implements com.mapconductor.core.controller.SlottedOverlayController<com.mapconductor.core.polygon.PolygonState, com.mapconductor.core.polygon.PolygonEntityInterface<com.mapconductor.core.polygon.PolygonState>> {
+  public com.mapconductor.mappls.polygon.MapplsPolygonConductor(com.mapconductor.mappls.polygon.MapplsPolygonOverlayRenderer, com.mapconductor.mappls.polyline.MapplsPolylineOverlayRenderer);
+  public final com.mapconductor.mappls.polygon.MapplsPolygonOverlayRenderer getPolygonOverlay();
+  public final com.mapconductor.mappls.polyline.MapplsPolylineOverlayRenderer getPolylineOverlay();
+  public int getZIndex();
+  public final kotlin.jvm.functions.Function1<com.mapconductor.core.polygon.PolygonEvent, kotlin.Unit> getClickListener();
+  public final void setClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.polygon.PolygonEvent, kotlin.Unit>);
+  public java.lang.Object add(java.util.List<com.mapconductor.core.polygon.PolygonState>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object update(com.mapconductor.core.polygon.PolygonState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public final void dispatchClick(com.mapconductor.core.polygon.PolygonEvent);
+  public com.mapconductor.core.polygon.PolygonEntityInterface<com.mapconductor.core.polygon.PolygonState> find(com.mapconductor.core.features.GeoPointInterface);
+  public java.lang.Object clear(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public com.mapconductor.core.controller.OverlayKind getKind();
+  public boolean has(java.lang.String);
+  public void setClickListenerAny(java.lang.Object);
+  public com.mapconductor.core.controller.OverlayHit resolveTap(com.mapconductor.core.features.GeoPointInterface);
+  public void destroy();
+  public java.lang.Object update(java.lang.Object, kotlin.coroutines.Continuation);
+  public java.lang.Object find(com.mapconductor.core.features.GeoPointInterface);
+}
+public final class com.mapconductor.mappls.polygon.MapplsPolygonConductorKt {
+}
+public final class com.mapconductor.mappls.polygon.MapplsPolygonLayer {
+  public com.mapconductor.mappls.polygon.MapplsPolygonLayer(java.lang.String, java.lang.String);
+  public final java.lang.String getSourceId();
+  public final java.lang.String getLayerId();
+  public final com.mappls.sdk.maps.style.sources.GeoJsonSource getSource();
+  public final com.mappls.sdk.maps.style.layers.FillLayer getLayer();
+  public final void draw(java.util.List<? extends com.mapconductor.core.polygon.PolygonEntityInterface<java.util.List<com.mappls.sdk.geojson.Feature>>>, com.mappls.sdk.maps.Style);
+}
+public final class com.mapconductor.mappls.polygon.MapplsPolygonLayer$Prop {
+  public static final com.mapconductor.mappls.polygon.MapplsPolygonLayer$Prop INSTANCE;
+  public static final java.lang.String FILL_COLOR;
+  public static final java.lang.String Z_INDEX;
+}
+public final class com.mapconductor.mappls.polygon.MapplsPolygonOverlayRenderer extends com.mapconductor.core.polygon.AbstractPolygonOverlayRenderer<java.util.List<? extends com.mappls.sdk.geojson.Feature>> {
+  public com.mapconductor.mappls.polygon.MapplsPolygonOverlayRenderer(com.mapconductor.mappls.polygon.MapplsPolygonLayer, com.mapconductor.core.polygon.PolygonManagerInterface<java.util.List<com.mappls.sdk.geojson.Feature>>, com.mapconductor.mappls.MapplsMapViewHolderInterface, kotlinx.coroutines.CoroutineScope);
+  public com.mapconductor.mappls.polygon.MapplsPolygonOverlayRenderer(com.mapconductor.mappls.polygon.MapplsPolygonLayer, com.mapconductor.core.polygon.PolygonManagerInterface, com.mapconductor.mappls.MapplsMapViewHolderInterface, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final com.mapconductor.mappls.polygon.MapplsPolygonLayer getLayer();
+  public final com.mapconductor.core.polygon.PolygonManagerInterface<java.util.List<com.mappls.sdk.geojson.Feature>> getPolygonManager();
+  public com.mapconductor.mappls.MapplsMapViewHolderInterface getHolder();
+  public kotlinx.coroutines.CoroutineScope getCoroutine();
+  public java.lang.Object onRemove(java.util.List<? extends com.mapconductor.core.polygon.PolygonEntityInterface<java.util.List<com.mappls.sdk.geojson.Feature>>>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object onPostProcess(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object removePolygon(com.mapconductor.core.polygon.PolygonEntityInterface<java.util.List<com.mappls.sdk.geojson.Feature>>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object createPolygon(com.mapconductor.core.polygon.PolygonState, kotlin.coroutines.Continuation<? super java.util.List<com.mappls.sdk.geojson.Feature>>);
+  public java.lang.Object updatePolygonProperties(java.util.List<com.mappls.sdk.geojson.Feature>, com.mapconductor.core.polygon.PolygonEntityInterface<java.util.List<com.mappls.sdk.geojson.Feature>>, com.mapconductor.core.polygon.PolygonEntityInterface<java.util.List<com.mappls.sdk.geojson.Feature>>, kotlin.coroutines.Continuation<? super java.util.List<com.mappls.sdk.geojson.Feature>>);
+  public com.mapconductor.core.map.MapViewHolderInterface getHolder();
+  public java.lang.Object updatePolygonProperties(java.lang.Object, com.mapconductor.core.polygon.PolygonEntityInterface, com.mapconductor.core.polygon.PolygonEntityInterface, kotlin.coroutines.Continuation);
+}
+public final class com.mapconductor.mappls.polyline.MapplsPolylineController extends com.mapconductor.core.polyline.PolylineController<java.util.List<? extends com.mappls.sdk.geojson.Feature>> {
+  public com.mapconductor.mappls.polyline.MapplsPolylineController(com.mapconductor.mappls.polyline.MapplsPolylineOverlayRenderer, com.mapconductor.core.polyline.PolylineManagerInterface<java.util.List<com.mappls.sdk.geojson.Feature>>);
+  public com.mapconductor.mappls.polyline.MapplsPolylineController(com.mapconductor.mappls.polyline.MapplsPolylineOverlayRenderer, com.mapconductor.core.polyline.PolylineManagerInterface, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public com.mapconductor.mappls.polyline.MapplsPolylineOverlayRenderer getRenderer();
+  public com.mapconductor.core.polyline.PolylineOverlayRendererInterface getRenderer();
+}
+public final class com.mapconductor.mappls.polyline.MapplsPolylineLayer {
+  public com.mapconductor.mappls.polyline.MapplsPolylineLayer(java.lang.String, java.lang.String);
+  public final java.lang.String getSourceId();
+  public final java.lang.String getLayerId();
+  public final com.mappls.sdk.maps.style.sources.GeoJsonSource getSource();
+  public final com.mappls.sdk.maps.style.layers.LineLayer getLayer();
+  public final void draw(java.util.List<? extends com.mapconductor.core.polyline.PolylineEntityInterface<java.util.List<com.mappls.sdk.geojson.Feature>>>, com.mappls.sdk.maps.Style);
+}
+public final class com.mapconductor.mappls.polyline.MapplsPolylineLayer$Prop {
+  public static final com.mapconductor.mappls.polyline.MapplsPolylineLayer$Prop INSTANCE;
+  public static final java.lang.String STROKE_COLOR;
+  public static final java.lang.String STROKE_WIDTH;
+  public static final java.lang.String Z_INDEX;
+}
+public final class com.mapconductor.mappls.polyline.MapplsPolylineOverlayRenderer extends com.mapconductor.core.polyline.AbstractPolylineOverlayRenderer<java.util.List<? extends com.mappls.sdk.geojson.Feature>> {
+  public com.mapconductor.mappls.polyline.MapplsPolylineOverlayRenderer(com.mapconductor.mappls.polyline.MapplsPolylineLayer, com.mapconductor.core.polyline.PolylineManagerInterface<java.util.List<com.mappls.sdk.geojson.Feature>>, com.mapconductor.mappls.MapplsMapViewHolderInterface, kotlinx.coroutines.CoroutineScope);
+  public com.mapconductor.mappls.polyline.MapplsPolylineOverlayRenderer(com.mapconductor.mappls.polyline.MapplsPolylineLayer, com.mapconductor.core.polyline.PolylineManagerInterface, com.mapconductor.mappls.MapplsMapViewHolderInterface, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public final com.mapconductor.mappls.polyline.MapplsPolylineLayer getLayer();
+  public final com.mapconductor.core.polyline.PolylineManagerInterface<java.util.List<com.mappls.sdk.geojson.Feature>> getPolylineManager();
+  public com.mapconductor.mappls.MapplsMapViewHolderInterface getHolder();
+  public kotlinx.coroutines.CoroutineScope getCoroutine();
+  public java.lang.Object createPolyline(com.mapconductor.core.polyline.PolylineState, kotlin.coroutines.Continuation<? super java.util.List<com.mappls.sdk.geojson.Feature>>);
+  public java.lang.Object updatePolylineProperties(java.util.List<com.mappls.sdk.geojson.Feature>, com.mapconductor.core.polyline.PolylineEntityInterface<java.util.List<com.mappls.sdk.geojson.Feature>>, com.mapconductor.core.polyline.PolylineEntityInterface<java.util.List<com.mappls.sdk.geojson.Feature>>, kotlin.coroutines.Continuation<? super java.util.List<com.mappls.sdk.geojson.Feature>>);
+  public java.lang.Object removePolyline(com.mapconductor.core.polyline.PolylineEntityInterface<java.util.List<com.mappls.sdk.geojson.Feature>>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object onPostProcess(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public final void redraw();
+  public com.mapconductor.core.map.MapViewHolderInterface getHolder();
+  public java.lang.Object updatePolylineProperties(java.lang.Object, com.mapconductor.core.polyline.PolylineEntityInterface, com.mapconductor.core.polyline.PolylineEntityInterface, kotlin.coroutines.Continuation);
+}
+public final class com.mapconductor.mappls.raster.MapplsRasterHeaderInjector {
+  public static final com.mapconductor.mappls.raster.MapplsRasterHeaderInjector INSTANCE;
+  public final void apply(java.util.List<com.mapconductor.core.raster.RasterLayerState>, java.lang.Object);
+  public final void remove(java.lang.Object);
+}
+public final class com.mapconductor.mappls.raster.MapplsRasterLayerController extends com.mapconductor.core.raster.RasterLayerController<com.mapconductor.mappls.raster.MapplsRasterLayerHandle> {
+  public com.mapconductor.mappls.raster.MapplsRasterLayerController(com.mapconductor.core.raster.RasterLayerManagerInterface<com.mapconductor.mappls.raster.MapplsRasterLayerHandle>, com.mapconductor.mappls.raster.MapplsRasterLayerOverlayRenderer);
+  public com.mapconductor.mappls.raster.MapplsRasterLayerController(com.mapconductor.core.raster.RasterLayerManagerInterface, com.mapconductor.mappls.raster.MapplsRasterLayerOverlayRenderer, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public java.lang.Object add(java.util.List<com.mapconductor.core.raster.RasterLayerState>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object update(com.mapconductor.core.raster.RasterLayerState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object clear(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public void destroy();
+  public final java.lang.Object reapplyStyle(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object update(java.lang.Object, kotlin.coroutines.Continuation);
+}
+public final class com.mapconductor.mappls.raster.MapplsRasterLayerHandle {
+  public com.mapconductor.mappls.raster.MapplsRasterLayerHandle(java.lang.String, java.lang.String);
+  public final java.lang.String getSourceId();
+  public final java.lang.String getLayerId();
+  public final java.lang.String component1();
+  public final java.lang.String component2();
+  public final com.mapconductor.mappls.raster.MapplsRasterLayerHandle copy(java.lang.String, java.lang.String);
+  public java.lang.String toString();
+  public int hashCode();
+  public boolean equals(java.lang.Object);
+}
+public final class com.mapconductor.mappls.raster.MapplsRasterLayerOverlayRenderer implements com.mapconductor.core.raster.RasterLayerOverlayRendererInterface<com.mapconductor.mappls.raster.MapplsRasterLayerHandle> {
+  public com.mapconductor.mappls.raster.MapplsRasterLayerOverlayRenderer(com.mapconductor.mappls.MapplsMapViewHolderInterface, kotlinx.coroutines.CoroutineScope);
+  public com.mapconductor.mappls.raster.MapplsRasterLayerOverlayRenderer(com.mapconductor.mappls.MapplsMapViewHolderInterface, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public kotlinx.coroutines.CoroutineScope getCoroutine();
+  public java.lang.Object onAdd(java.util.List<? extends com.mapconductor.core.raster.RasterLayerOverlayRendererInterface$AddParamsInterface>, kotlin.coroutines.Continuation<? super java.util.List<com.mapconductor.mappls.raster.MapplsRasterLayerHandle>>);
+  public java.lang.Object onChange(java.util.List<? extends com.mapconductor.core.raster.RasterLayerOverlayRendererInterface$ChangeParamsInterface<com.mapconductor.mappls.raster.MapplsRasterLayerHandle>>, kotlin.coroutines.Continuation<? super java.util.List<com.mapconductor.mappls.raster.MapplsRasterLayerHandle>>);
+  public java.lang.Object onRemove(java.util.List<? extends com.mapconductor.core.raster.RasterLayerEntityInterface<com.mapconductor.mappls.raster.MapplsRasterLayerHandle>>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object onPostProcess(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+  public java.lang.Object onCameraChanged(com.mapconductor.core.map.MapCameraPosition, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+}
+final class com.mapconductor.mappls.raster.MapplsRasterLayerOverlayRenderer$Companion {
+}
+public final class com.mapconductor.mappls.zoom.ZoomAltitudeConverter extends com.mapconductor.core.zoom.WebMercatorZoomAltitudeConverter {
+  public static final com.mapconductor.mappls.zoom.ZoomAltitudeConverter$Companion Companion;
+  public static final double MAPPLS_TO_GOOGLE_ZOOM_OFFSET;
+  public com.mapconductor.mappls.zoom.ZoomAltitudeConverter(double);
+  public com.mapconductor.mappls.zoom.ZoomAltitudeConverter(double, int, kotlin.jvm.internal.DefaultConstructorMarker);
+  public com.mapconductor.mappls.zoom.ZoomAltitudeConverter();
+}
+public final class com.mapconductor.mappls.zoom.ZoomAltitudeConverter$Companion {
+  public final double mapplsZoomToGoogleZoom(double);
+  public final double googleZoomToMapplsZoom(double);
+}
