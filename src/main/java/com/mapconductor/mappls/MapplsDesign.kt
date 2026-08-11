@@ -28,20 +28,19 @@ data class MapplsDesign(
                 id = "default",
                 styleName = "",
             )
+
+        /**
+         * 標準（昼）。どのアカウントにも入っている基本スタイル。
+         *
+         * これ以外のスタイルは**アカウント紐付き**で、コンソールで割り当てた名前を
+         * `MapplsDesign(id, styleName)` で指定する（存在しない名前は
+         * `setMapplsStyle` が「style not found」で弾く。実行時の一覧は
+         * `MapplsMap.getMapplsAvailableStyles()`）。
+         */
         val StandardDay =
             MapplsDesign(
-                id = "standard-day",
-                styleName = "standard-day",
-            )
-        val StandardNight =
-            MapplsDesign(
-                id = "standard-night",
-                styleName = "standard-night",
-            )
-        val GreyDay =
-            MapplsDesign(
-                id = "grey-day",
-                styleName = "grey-day",
+                id = "standard_day",
+                styleName = "standard_day",
             )
     }
 }

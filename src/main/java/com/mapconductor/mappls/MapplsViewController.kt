@@ -32,6 +32,7 @@ import com.mappls.sdk.gestures.MoveGestureDetector
 import com.mappls.sdk.maps.MapplsMap
 import com.mappls.sdk.maps.Style
 import com.mappls.sdk.maps.geometry.LatLng
+import com.mappls.sdk.maps.style.OnStyleLoadListener
 import java.util.UUID
 import android.annotation.SuppressLint
 import android.util.Log
@@ -165,9 +166,16 @@ class MapplsViewController(
             if (value.styleName.isEmpty()) return@launch
             holder.map.setMapplsStyle(
                 value.styleName,
-                Style.OnStyleLoaded { newStyle ->
-                    Log.d("Mappls", "Style changed to ${value.styleName}")
-                    setupStyle(newStyle)
+                object : OnStyleLoadListener {
+                    override fun onStyleLoaded(newStyle: Style) {
+                        Log.d("Mappls", "Style changed to ${value.styleName}")
+                        setupStyle(newStyle)
+                    }
+
+                    override fun onError(message: String?) {
+                        // スタイル名はアカウント紐付き。存在しない名前はここへ来る
+                        Log.w("Mappls", "setMapplsStyle(${value.styleName}) failed: $message")
+                    }
                 },
             )
         }
