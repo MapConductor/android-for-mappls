@@ -66,7 +66,13 @@ dependencies {
     // （MapplsRasterHeaderInjector）。
     implementation(libs.okhttp)
 
-    api(project(":android-sdk-compose"))
+    // 集約ビルド（android-sdk）ではプロジェクト参照、単体ビルド（CI のリリース）では
+    // Maven 座標で解決する。他プロバイダと同じ形。
+    if (findProject(":android-sdk-compose") != null) {
+        api(project(":android-sdk-compose"))
+    } else {
+        api("com.mapconductor:compose:$libraryVersion")
+    }
 
     testImplementation(libs.junit)
 }
