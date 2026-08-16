@@ -47,11 +47,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "android-for-mappls"
 
-if (providers
-        .gradleProperty("skipSampleApp")
-        .map(String::toBoolean)
-        .getOrElse(false)
-        .not()
-) {
-    include(":sample-app")
-}
