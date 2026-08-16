@@ -48,7 +48,14 @@ android {
     }
 }
 
+val libraryGroupId = project.findProperty("libraryGroupId") as String? ?: "com.mapconductor"
+val libraryArtifactId = "for-mappls"
+val libraryVersion = project.findProperty("libraryVersion") as String? ?: "1.0.0"
+
 dependencies {
+    // CancellableContinuation.resume の 3 引数 onCancellation は coroutines 1.9 以降。
+    // 明示しないと推移的に古い版が入り、単体ビルドだけがコンパイルエラーになる。
+    implementation(libs.kotlinx.coroutines.android)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.foundation)
@@ -77,9 +84,6 @@ dependencies {
     testImplementation(libs.junit)
 }
 
-val libraryGroupId = project.findProperty("libraryGroupId") as String? ?: "com.mapconductor"
-val libraryArtifactId = "for-mappls"
-val libraryVersion = project.findProperty("libraryVersion") as String? ?: "1.0.0"
 
 // Set project version for NMCP plugin
 version = libraryVersion
