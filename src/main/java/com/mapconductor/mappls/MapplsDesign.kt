@@ -32,8 +32,8 @@ data class MapplsDesign(
         /**
          * 標準（昼）。どのアカウントにも入っている基本スタイル。
          *
-         * これ以外のスタイルは**アカウント紐付き**で、コンソールで割り当てた名前を
-         * `MapplsDesign(id, styleName)` で指定する（存在しない名前は
+         * これ以外のスタイルは**契約に紐づく**。コンソールで割り当てた名前を
+         * `MapplsDesign(id, styleName)` で指定する（契約に無い名前は
          * `setMapplsStyle` が「style not found」で弾く。実行時の一覧は
          * `MapplsMap.getMapplsAvailableStyles()`）。
          */
@@ -41,6 +41,26 @@ data class MapplsDesign(
             MapplsDesign(
                 id = "standard_day",
                 styleName = "standard_day",
+            )
+
+        /**
+         * 標準（夜）。**追加料金の有料オプション**。
+         *
+         * 契約に含まれていないアカウントでは `setMapplsStyle` が弾くため、
+         * このリポジトリのサンプルでは選択肢に出していない（サンプルは追加料金を払っていない）。
+         * ライブラリとしては、契約済みのアプリがそのまま使えるよう公開しておく。
+         */
+        val StandardNight =
+            MapplsDesign(
+                id = "standard_night",
+                styleName = "standard_night",
+            )
+
+        /** グレー（昼）。**追加料金の有料オプション**。[StandardNight] と同じ扱い。 */
+        val GreyDay =
+            MapplsDesign(
+                id = "grey_day",
+                styleName = "grey_day",
             )
     }
 }

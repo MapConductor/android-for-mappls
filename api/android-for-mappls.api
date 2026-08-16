@@ -52,6 +52,8 @@ public final class com.mapconductor.mappls.MapplsDesign implements com.mapconduc
 public final class com.mapconductor.mappls.MapplsDesign$Companion {
   public final com.mapconductor.mappls.MapplsDesign getDefault();
   public final com.mapconductor.mappls.MapplsDesign getStandardDay();
+  public final com.mapconductor.mappls.MapplsDesign getStandardNight();
+  public final com.mapconductor.mappls.MapplsDesign getGreyDay();
 }
 public final class com.mapconductor.mappls.MapplsHttpBridge {
   public static final com.mapconductor.mappls.MapplsHttpBridge INSTANCE;
