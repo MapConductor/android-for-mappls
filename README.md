@@ -14,6 +14,13 @@ provider: Marker, Polyline, Polygon, Circle, GroundImage, RasterLayer and InfoBu
 
 https://mapconductor.com/setup/
 
+### API key
+
+MapConductor does not read Mappls credentials from the manifest. Initialise the
+Mappls SDK yourself — with its own API, from `Application.onCreate()` — before the
+first map is created. Credentials come from the Mappls (MapmyIndia) developer
+console. Keep them out of source control.
+
 Mappls credentials come from the Mappls (MapmyIndia) developer console. Configure them the
 way the Mappls SDK expects before the first map is created.
 
