@@ -1,6 +1,7 @@
 package com.mapconductor.mappls
 
 import com.mapconductor.core.features.GeoPoint
+import com.mapconductor.core.map.CameraBearing
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.spherical.Spherical
@@ -21,7 +22,7 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
             .target(GeoPoint.from(position).toLatLng())
             .zoom(ZoomAltitudeConverter.googleZoomToMapplsZoom(zoom))
             .tilt(tilt)
-            .bearing(bearing)
+            .bearing(CameraBearing.toNativeHeading(bearing))
             // TODO:
 //    .padding(paddings?.toEdgeInsects())
             .build()
@@ -37,7 +38,7 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
                 cos(tiltAbsRad) *
                 tan(tiltAbsRad) *
                 NEGATIVE_TILT_TARGET_DISTANCE_SCALE
-        val target = Spherical.computeOffset(position, distanceForward, bearing)
+        val target = Spherical.computeOffset(position, distanceForward, CameraBearing.toNativeHeading(bearing))
         val adjustedZoom = zoom + NEGATIVE_TILT_ZOOM_OFFSET_AT_MAX_TILT * (tiltAbsDeg / 60.0)
 
         return CameraPosition
@@ -45,7 +46,7 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
             .target(target.toLatLng())
             .zoom(ZoomAltitudeConverter.googleZoomToMapplsZoom(adjustedZoom))
             .tilt(tiltAbsDeg)
-            .bearing(bearing)
+            .bearing(CameraBearing.toNativeHeading(bearing))
             // TODO:
 //    .padding(paddings?.toEdgeInsects())
             .build()
@@ -82,7 +83,7 @@ internal fun CameraPosition.toMapCameraPosition(logicalTiltHint: Double?): MapCa
         return MapCameraPosition(
             position = target?.toGeoPoint() ?: GeoPoint.fromLongLat(0.0, 0.0),
             zoom = ZoomAltitudeConverter.mapplsZoomToGoogleZoom(zoom),
-            bearing = bearing,
+            bearing = CameraBearing.bearingFromNativeHeading(bearing),
             tilt = pitch,
             visibleRegion = null,
         )
@@ -104,7 +105,7 @@ internal fun CameraPosition.toMapCameraPosition(logicalTiltHint: Double?): MapCa
     return MapCameraPosition(
         position = originalPosition,
         zoom = originalGoogleZoom,
-        bearing = bear,
+        bearing = CameraBearing.bearingFromNativeHeading(bear),
         tilt = -pitchAbsDeg,
         visibleRegion = null,
     )
