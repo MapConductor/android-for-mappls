@@ -97,7 +97,7 @@ class MapplsRasterLayerOverlayRenderer(
             if (isMarkerTileRaster(state)) {
                 addLayerForMarkerTile(style, layer)
             } else {
-                style.addLayer(layer)
+                addBelowBasemapLabels(style, layer)
             }
         } catch (e: Exception) {
             Log.w("Mappls", "Failed to add raster layer: ${e.message}")
@@ -181,11 +181,57 @@ class MapplsRasterLayerOverlayRenderer(
                 ),
             )
             try {
-                style.addLayer(layer)
+                addBelowBasemapLabels(style, layer)
             } catch (_: Exception) {
             }
         }
     }
+
+    /**
+     * Puts a raster layer above the basemap's geometry but **below its labels**.
+     *
+     * Appended at the top of the style instead, a raster overlay covers the
+     * place names, road names and shields the backend draws -- a vector tile
+     * layer's own roads run straight through them, which is what "the labels
+     * are under the lines" looks like. Every raster overlay we add has the
+     * same problem, so the rule lives here rather than in each of them.
+     *
+     * Inserting successive layers below the same anchor keeps their order:
+     * each one lands directly below the anchor, which is directly above the
+     * one inserted before it.
+     *
+     * Anything of ours is skipped when looking for the anchor. Markers are a
+     * symbol layer too, and anchoring to them would put the raster back above
+     * the labels -- with the added twist of only doing so once a marker exists.
+     */
+    private fun addBelowBasemapLabels(
+        style: com.mappls.sdk.maps.Style,
+        layer: com.mappls.sdk.maps.style.layers.Layer,
+    ) {
+        val anchor =
+            style.layers.firstOrNull {
+                it is com.mappls.sdk.maps.style.layers.SymbolLayer && !isOursById(it.id)
+            }
+        if (anchor == null) {
+            style.addLayer(layer)
+            return
+        }
+        try {
+            style.addLayerBelow(layer, anchor.id)
+        } catch (_: Exception) {
+            style.addLayer(layer)
+        }
+    }
+
+    /** True for layers this SDK adds, as opposed to the design's own. */
+    private fun isOursById(id: String): Boolean =
+        id.startsWith("raster-layer-") ||
+            id.startsWith("org.maplibre.annotations") ||
+            id.startsWith("com.mappls.annotations") ||
+            id.startsWith(MARKERS_LAYER_ID) ||
+            id.startsWith("marker-drag-layer") ||
+            id.startsWith(POLYLINE_LAYER_ID) ||
+            id.startsWith("circle-layer")
 
     private fun buildSource(
         sourceId: String,
