@@ -462,7 +462,6 @@ public final class com.mapconductor.mappls.raster.MapplsRasterLayerController ex
   public java.lang.Object update(com.mapconductor.core.raster.RasterLayerState, kotlin.coroutines.Continuation<? super kotlin.Unit>);
   public java.lang.Object clear(kotlin.coroutines.Continuation<? super kotlin.Unit>);
   public void destroy();
-  public final java.lang.Object reapplyStyle(kotlin.coroutines.Continuation<? super kotlin.Unit>);
   public java.lang.Object update(java.lang.Object, kotlin.coroutines.Continuation);
 }
 public final class com.mapconductor.mappls.raster.MapplsRasterLayerHandle {
