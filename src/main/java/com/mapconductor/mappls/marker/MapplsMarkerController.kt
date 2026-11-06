@@ -20,8 +20,11 @@ import com.mapconductor.core.raster.TileScheme
 import com.mapconductor.core.tileserver.TileServerRegistry
 import com.mapconductor.mappls.MapplsActualMarker
 import java.util.UUID
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.withPermit
 
@@ -110,11 +113,12 @@ class MapplsMarkerController(
         if (currentFinger == prevFinger) return
 
         semaphore.withPermit {
+            // 件数だけが要る。allEntities() は全件の写しを作るので、ラベルの付け替えのように
+            // 数十本が続けて変わると、そのたびに 14 万件を写すことになる。
             val tilingEnabled =
-                markerTiling.enabled && markerManager.allEntities().size >= markerManager.minMarkerCount
+                markerTiling.enabled && markerManager.getMemoryStats().entityCount >= markerManager.minMarkerCount
             val wantsTiled = tilingEnabled && !state.draggable && state.getAnimation() == null
             val wasTiled = tiledMarkerIds.contains(state.id)
-            val markerIcon = state.icon?.toBitmapIcon() ?: defaultMarkerIcon
 
             if (wantsTiled) {
                 if (!wasTiled) {
@@ -132,14 +136,19 @@ class MapplsMarkerController(
                         tiling = true,
                     ),
                 )
-                renderer.onPostProcess()
-                syncTiledOverlay()
+                // タイル担当のままなら、ネイティブのマーカーには何も起きていない。onPostProcess は
+                // 全件を写してネイティブ分を描き直すので（14 万件で 1 回 50ms）、ネイティブから
+                // タイルへ移ったときだけ呼ぶ。
+                if (!wasTiled) renderer.onPostProcess()
+                scheduleTileRefresh()
                 return@withPermit
             }
 
             if (wasTiled) {
                 tiledMarkerIds.remove(state.id)
             }
+            // ネイティブマーカーとして描くときだけ焼き込む。タイル担当なら要らない。
+            val markerIcon = state.icon?.toBitmapIcon() ?: defaultMarkerIcon
 
             val params =
                 object : MarkerOverlayRendererInterface.ChangeParamsInterface<MapplsActualMarker> {
@@ -170,12 +179,31 @@ class MapplsMarkerController(
             renderer.onPostProcess()
 
             if (tiledMarkerIds.isNotEmpty()) {
-                syncTiledOverlay()
+                scheduleTileRefresh()
             } else {
                 removeTileOverlay()
             }
         }
         viewportSwitch.requestReapply()
+    }
+
+    private var tileRefreshJob: Job? = null
+
+    /**
+     * 1 本ずつの変更からの描き直しを 1 回にまとめる。
+     *
+     * ラベルの付け替えのように数十本が続けて変わると、1 本ごとにラスターソースを差し替え、
+     * そのたびに地図が見えているタイルを全部取り直していた（MapLibre・Pixel 5a で 45 回、
+     * 描き直したタイル 494 枚、最後のタイルまで 6 秒）。続けて来た変更は
+     * [TILE_REFRESH_COALESCE] の間に受けて、まとめて 1 回だけ差し替える。
+     */
+    private fun scheduleTileRefresh() {
+        if (tileRefreshJob?.isActive == true) return
+        tileRefreshJob =
+            coroutine.launch {
+                delay(TILE_REFRESH_COALESCE)
+                semaphore.withPermit { syncTiledOverlay() }
+            }
     }
 
     override suspend fun clear() {
@@ -214,6 +242,8 @@ class MapplsMarkerController(
 
     override fun destroy() {
         viewportSwitch.destroy()
+        // 待っている描き直しが後から走ると、外したタイル経路をまた登録してしまう。
+        tileRefreshJob?.cancel()
         // Clean up tile server registration
         // Unregister this map's route only. Never stop the server here: it is
         // a process-wide singleton shared by all map controllers and overlay
@@ -315,5 +345,10 @@ class MapplsMarkerController(
 
         rasterLayerCallback?.onRasterLayerUpdate(null)
         markerTileRasterLayerState = null
+    }
+
+    private companion object {
+        /** 続けて来る変更を 1 回の描き直しにまとめる窓。1 フレーム分。 */
+        val TILE_REFRESH_COALESCE = 16.milliseconds
     }
 }
