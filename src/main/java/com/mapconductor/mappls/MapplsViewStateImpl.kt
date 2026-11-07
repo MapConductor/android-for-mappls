@@ -8,6 +8,7 @@ import com.mapconductor.compose.map.BaseMapViewSaver
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapViewState
+import com.mapconductor.core.map.MapViewStateBundle
 import com.mapconductor.core.map.MapViewStateInterface
 import java.util.UUID
 import android.os.Bundle
@@ -53,7 +54,10 @@ class MapplsMapViewSaver : BaseMapViewSaver<MapplsViewState>() {
         state: MapplsViewState,
         bundle: Bundle,
     ) {
-        bundle.putString("styleName", state.mapDesignType.styleName)
+        val design = state.mapDesignType
+        bundle.putString("id", design.id)
+        bundle.putString("styleName", design.styleName)
+        MapViewStateBundle.putAttributionRules(bundle, design.attributionRules)
     }
 
     override fun createState(
@@ -71,6 +75,7 @@ class MapplsMapViewSaver : BaseMapViewSaver<MapplsViewState>() {
                     styleName =
                         mapDesignBundle?.getString("styleName")
                             ?: MapplsDesign.Default.styleName,
+                    attributionRules = MapViewStateBundle.getAttributionRules(mapDesignBundle),
                 ),
             cameraPosition = cameraPosition,
         )
