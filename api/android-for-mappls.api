@@ -370,6 +370,8 @@ public final class com.mapconductor.mappls.polygon.MapplsPolygonConductor implem
   public final com.mapconductor.mappls.polygon.MapplsPolygonOverlayRenderer getPolygonOverlay();
   public final com.mapconductor.mappls.polyline.MapplsPolylineOverlayRenderer getPolylineOverlay();
   public int getZIndex();
+  public final com.mapconductor.core.polygon.PolygonTiler getTiler();
+  public final void setTiler(com.mapconductor.core.polygon.PolygonTiler);
   public final kotlin.jvm.functions.Function1<com.mapconductor.core.polygon.PolygonEvent, kotlin.Unit> getClickListener();
   public final void setClickListener(kotlin.jvm.functions.Function1<? super com.mapconductor.core.polygon.PolygonEvent, kotlin.Unit>);
   public java.lang.Object add(java.util.List<com.mapconductor.core.polygon.PolygonState>, kotlin.coroutines.Continuation<? super kotlin.Unit>);

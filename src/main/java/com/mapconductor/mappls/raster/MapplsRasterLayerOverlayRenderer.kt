@@ -1,5 +1,6 @@
 package com.mapconductor.mappls.raster
 
+import com.mapconductor.core.polygon.POLYGON_TILE_LAYER_ID
 import com.mapconductor.core.raster.RasterLayerEntityInterface
 import com.mapconductor.core.raster.RasterLayerOverlayRendererInterface
 import com.mapconductor.core.raster.RasterLayerSource
@@ -23,6 +24,8 @@ class MapplsRasterLayerOverlayRenderer(
     private val handleById: MutableMap<String, MapplsRasterLayerHandle> = mutableMapOf()
 
     private fun isMarkerTileRaster(state: RasterLayerState): Boolean = state.id.startsWith(MARKER_TILE_RASTER_ID_PREFIX)
+
+    private fun isPolygonTileRaster(state: RasterLayerState): Boolean = state.id == POLYGON_TILE_LAYER_ID
 
     override suspend fun onAdd(
         data: List<RasterLayerOverlayRendererInterface.AddParamsInterface>,
@@ -96,6 +99,8 @@ class MapplsRasterLayerOverlayRenderer(
         try {
             if (isMarkerTileRaster(state)) {
                 addLayerForMarkerTile(style, layer)
+            } else if (isPolygonTileRaster(state)) {
+                addLayerForPolygonTile(style, layer)
             } else {
                 addBelowBasemapLabels(style, layer)
             }
@@ -103,6 +108,26 @@ class MapplsRasterLayerOverlayRenderer(
             Log.w("Mappls", "Failed to add raster layer: ${e.message}")
         }
         return handle
+    }
+
+    /**
+     * The polygon tiles are polygons drawn as images, not imagery: they go
+     * where the SDK's own polygon layers do, over the basemap and under
+     * polylines and markers -- below the first of those in the style.
+     */
+    private fun addLayerForPolygonTile(
+        style: com.mappls.sdk.maps.Style,
+        layer: com.mappls.sdk.maps.style.layers.Layer,
+    ) {
+        val anchor = style.layers.map { it.id }.firstOrNull { id -> POLYGON_TILE_ANCHOR_PREFIXES.any { id.startsWith(it) } }
+        if (anchor != null) {
+            try {
+                style.addLayerBelow(layer, anchor)
+                return
+            } catch (_: Exception) {
+            }
+        }
+        style.addLayer(layer)
     }
 
     private fun addLayerForMarkerTile(
@@ -159,7 +184,7 @@ class MapplsRasterLayerOverlayRenderer(
         val ordered =
             stateById.values
                 .asSequence()
-                .filter { !isMarkerTileRaster(it) }
+                .filter { !isMarkerTileRaster(it) && !isPolygonTileRaster(it) }
                 .sortedBy { it.zIndex }
                 .mapNotNull { state -> handleById[state.id]?.let { handle -> state to handle } }
                 .toList()
@@ -262,6 +287,10 @@ class MapplsRasterLayerOverlayRenderer(
         private const val MARKER_TILE_RASTER_ID_PREFIX = "marker-tile-"
         private const val MARKERS_LAYER_ID = "markers-layer"
         private const val POLYLINE_LAYER_ID = "polyline-layer"
+
+        /** The SDK's own layers the polygon tiles go below, whichever comes first in the style. */
+        private val POLYGON_TILE_ANCHOR_PREFIXES =
+            listOf("polygon-fill-layer", "polygon-outline-layer", POLYLINE_LAYER_ID, "raster-layer-marker-tile-", MARKERS_LAYER_ID)
     }
 }
 
