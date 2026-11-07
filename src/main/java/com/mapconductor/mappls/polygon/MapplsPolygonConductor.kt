@@ -160,7 +160,10 @@ class MapplsPolygonConductor(
         }
 
     override fun destroy() {
-        // No native resources to clean up for polygons
+        // The tile server outlives the map; without this its route keeps every
+        // tiled polygon (and the renderer's copies of them) alive. Same as
+        // core's PolygonController.destroy(), which this conductor does not extend.
+        tiler?.dispose()
     }
 }
 
