@@ -8,6 +8,7 @@ import com.mapconductor.core.polygon.PolygonEntity
 import com.mapconductor.core.polygon.PolygonEntityInterface
 import com.mapconductor.core.polygon.PolygonEvent
 import com.mapconductor.core.polygon.PolygonState
+import com.mapconductor.core.polygon.PolygonTileSet
 import com.mapconductor.core.polygon.PolygonTiler
 import com.mapconductor.core.polyline.PolylineEntity
 import com.mapconductor.core.polyline.PolylineState
@@ -88,9 +89,15 @@ class MapplsPolygonConductor(
     override suspend fun update(state: PolygonState) {
         tiler?.let { tiler ->
             if (tiler.isTiled(state.id)) {
-                polygonOverlay.polygonManager.registerEntity(PolygonEntity(polygon = IN_TILES, state = state))
-                tiler.update(state)
-                return
+                if (PolygonTileSet.canTile(state)) {
+                    polygonOverlay.polygonManager.registerEntity(PolygonEntity(polygon = IN_TILES, state = state))
+                    tiler.update(state)
+                    return
+                }
+                // No longer drawable in a tile (geodesic, half the world wide, or
+                // under 3 points): the GeoJSON layers draw it from now on. Still
+                // on the map, so this is not an add.
+                tiler.remove(state.id)
             }
         }
         polygonOverlay.createPolygon(state)?.let { polygon ->
