@@ -14,4 +14,11 @@ class MapplsPolygonController(
 ) : PolygonController<MapplsActualPolygon>(renderer.fill.polygonManager, renderer) {
     // 旧 MapplsPolygonConductor と同じ値を保つ。
     override val zIndex: Int = 2
+
+    override fun destroy() {
+        super.destroy()
+        // The outlines live in the outline renderer's manager, which core does not
+        // know about; a destroyed controller that is still referenced keeps none.
+        renderer.outline.polylineManager.clear()
+    }
 }
