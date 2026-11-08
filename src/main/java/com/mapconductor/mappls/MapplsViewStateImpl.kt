@@ -21,7 +21,10 @@ class MapplsViewState(
     cameraPosition: MapCameraPosition = MapCameraPosition.Default,
 ) : MapViewState<MapplsMapDesignTypeInterface>(cameraPosition),
     MapplsViewStateInterface {
-    private var controller: MapplsViewControllerInterface? = null
+    // Read through the base so that letting go of the controller there (MapViewBase
+    // does it when the map is torn down) leaves nothing behind here.
+    private val controller: MapplsViewControllerInterface?
+        get() = attachedMapController as? MapplsViewControllerInterface
     private var _mapDesignType: MapplsMapDesignTypeInterface = mapDesignType
 
     override var mapDesignType: MapplsMapDesignTypeInterface
@@ -32,7 +35,6 @@ class MapplsViewState(
         get() = _mapDesignType
 
     internal fun setController(controller: MapplsViewControllerInterface) {
-        this.controller = controller
         attachController(controller)
     }
 
