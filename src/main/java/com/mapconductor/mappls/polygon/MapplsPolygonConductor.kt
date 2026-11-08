@@ -130,7 +130,10 @@ class MapplsPolygonConductor(
         }
 
     override fun destroy() {
-        // No native resources to clean up for polygons
+        // A destroyed conductor can still be referenced (by its map controller,
+        // or a state that has not let go yet); without this it keeps every entity.
+        polygonOverlay.polygonManager.clear()
+        polylineOverlay.polylineManager.clear()
     }
 }
 
