@@ -25,7 +25,7 @@ import com.mapconductor.mappls.marker.MapplsMarkerController
 import com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer
 import com.mapconductor.mappls.marker.MarkerDragLayer
 import com.mapconductor.mappls.marker.MarkerLayer
-import com.mapconductor.mappls.polygon.MapplsPolygonConductor
+import com.mapconductor.mappls.polygon.MapplsPolygonController
 import com.mapconductor.mappls.polyline.MapplsPolylineController
 import com.mapconductor.mappls.raster.MapplsRasterLayerController
 import com.mappls.sdk.gestures.MoveGestureDetector
@@ -47,7 +47,7 @@ class MapplsViewController(
     override val holder: MapplsMapViewHolderInterface,
     internal val markerController: MapplsMarkerController,
     internal val polylineController: MapplsPolylineController,
-    internal val polygonController: MapplsPolygonConductor,
+    internal val polygonController: MapplsPolygonController,
     internal val groundImageController: MapplsGroundImageController,
     internal val circleController: MapplsCircleController,
     internal val rasterLayerController: MapplsRasterLayerController,
