@@ -108,6 +108,15 @@ public final class com.mapconductor.mappls.MapplsMapViewSaver extends com.mapcon
 public final class com.mapconductor.mappls.MapplsMapViewScope extends com.mapconductor.compose.MapViewScope {
   public com.mapconductor.mappls.MapplsMapViewScope();
 }
+public final class com.mapconductor.mappls.MapplsOverlayStacking {
+  public static final com.mapconductor.mappls.MapplsOverlayStacking INSTANCE;
+  public final com.mapconductor.core.controller.OverlayLayerStack stackOf(com.mappls.sdk.maps.MapplsMap);
+  public final com.mapconductor.core.controller.OverlayStacking$Key key(com.mapconductor.core.controller.OverlayKind, int);
+  public final com.mapconductor.core.controller.OverlayStacking$Key getMARKER_TILE();
+  public final com.mapconductor.core.controller.OverlayStacking$Key getMARKER_DRAG();
+  public final void add(com.mappls.sdk.maps.MapplsMap, com.mappls.sdk.maps.Style, com.mappls.sdk.maps.style.layers.Layer, com.mapconductor.core.controller.OverlayStacking$Key);
+  public final void remove(com.mappls.sdk.maps.MapplsMap, com.mappls.sdk.maps.Style, java.lang.String);
+}
 public final class com.mapconductor.mappls.MapplsPolyUtilsKt {
   public static final java.util.List<com.mappls.sdk.geojson.Feature> createMapplsLines-rXlOB7A(java.lang.String, java.util.List<? extends com.mapconductor.core.features.GeoPointInterface>, boolean, long, float, int);
   public static final java.lang.String toMapplsColorString-8_81llA(long);

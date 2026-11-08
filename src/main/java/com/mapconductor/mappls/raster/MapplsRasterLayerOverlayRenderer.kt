@@ -1,11 +1,13 @@
 package com.mapconductor.mappls.raster
 
+import com.mapconductor.core.controller.OverlayKind
 import com.mapconductor.core.raster.RasterLayerEntityInterface
 import com.mapconductor.core.raster.RasterLayerOverlayRendererInterface
 import com.mapconductor.core.raster.RasterLayerSource
 import com.mapconductor.core.raster.RasterLayerState
 import com.mapconductor.core.raster.TileScheme
 import com.mapconductor.mappls.MapplsMapViewHolderInterface
+import com.mapconductor.mappls.MapplsOverlayStacking
 import com.mappls.sdk.maps.style.layers.Property
 import com.mappls.sdk.maps.style.layers.PropertyFactory
 import com.mappls.sdk.maps.style.layers.RasterLayer
@@ -93,38 +95,26 @@ class MapplsRasterLayerOverlayRenderer(
         } catch (e: Exception) {
             Log.w("Mappls", "Failed to add raster source: ${e.message}")
         }
-        try {
-            if (isMarkerTileRaster(state)) {
-                addLayerForMarkerTile(style, layer)
-            } else {
-                addBelowBasemapLabels(style, layer)
-            }
-        } catch (e: Exception) {
-            Log.w("Mappls", "Failed to add raster layer: ${e.message}")
-        }
+        addToStack(style, layer, state)
         return handle
     }
 
-    private fun addLayerForMarkerTile(
+    /**
+     * 帯の順（[MapplsOverlayStacking]）で足す。アプリのラスターはラスターの帯
+     * （一番下、ベースマップのラベルの下）、マーカーのタイルはマーカーの帯の一番下。
+     */
+    private fun addToStack(
         style: com.mappls.sdk.maps.Style,
         layer: RasterLayer,
+        state: RasterLayerState,
     ) {
-        // Insert the raster tiles below the marker symbol layer so they don't cover markers,
-        // but remain above vector overlays that are anchored below markers (polyline/circle/etc).
-        try {
-            style.addLayerBelow(layer, MARKERS_LAYER_ID)
-            return
-        } catch (_: Exception) {
-        }
-
-        // Best-effort fallback: place above polylines if marker layer isn't present yet.
-        try {
-            style.addLayerAbove(layer, POLYLINE_LAYER_ID)
-            return
-        } catch (_: Exception) {
-        }
-
-        style.addLayer(layer)
+        val key =
+            if (isMarkerTileRaster(state)) {
+                MapplsOverlayStacking.MARKER_TILE
+            } else {
+                MapplsOverlayStacking.key(OverlayKind.RasterLayer, state.zIndex)
+            }
+        MapplsOverlayStacking.add(holder.map, style, layer, key)
     }
 
     private fun updateLayer(
@@ -145,10 +135,7 @@ class MapplsRasterLayerOverlayRenderer(
     private fun removeLayer(entity: RasterLayerEntityInterface<MapplsRasterLayerHandle>) {
         val style = holder.map.style ?: return
         val handle = entity.layer
-        try {
-            style.removeLayer(handle.layerId)
-        } catch (_: Exception) {
-        }
+        MapplsOverlayStacking.remove(holder.map, style, handle.layerId)
         try {
             style.removeSource(handle.sourceId)
         } catch (_: Exception) {
@@ -164,11 +151,10 @@ class MapplsRasterLayerOverlayRenderer(
                 .mapNotNull { state -> handleById[state.id]?.let { handle -> state to handle } }
                 .toList()
 
+        // zIndex が変わったときのために、いったん外して zIndex の順に入れ直す
+        // （同じ zIndex なら渡された順）。位置は帯の順で決まる。
         ordered.forEach { (_, handle) ->
-            try {
-                style.removeLayer(handle.layerId)
-            } catch (_: Exception) {
-            }
+            MapplsOverlayStacking.remove(holder.map, style, handle.layerId)
         }
 
         ordered.forEach { (state, handle) ->
@@ -180,58 +166,9 @@ class MapplsRasterLayerOverlayRenderer(
                     if (state.visible) Property.VISIBLE else Property.NONE,
                 ),
             )
-            try {
-                addBelowBasemapLabels(style, layer)
-            } catch (_: Exception) {
-            }
+            addToStack(style, layer, state)
         }
     }
-
-    /**
-     * Puts a raster layer above the basemap's geometry but **below its labels**.
-     *
-     * Appended at the top of the style instead, a raster overlay covers the
-     * place names, road names and shields the backend draws -- a vector tile
-     * layer's own roads run straight through them, which is what "the labels
-     * are under the lines" looks like. Every raster overlay we add has the
-     * same problem, so the rule lives here rather than in each of them.
-     *
-     * Inserting successive layers below the same anchor keeps their order:
-     * each one lands directly below the anchor, which is directly above the
-     * one inserted before it.
-     *
-     * Anything of ours is skipped when looking for the anchor. Markers are a
-     * symbol layer too, and anchoring to them would put the raster back above
-     * the labels -- with the added twist of only doing so once a marker exists.
-     */
-    private fun addBelowBasemapLabels(
-        style: com.mappls.sdk.maps.Style,
-        layer: com.mappls.sdk.maps.style.layers.Layer,
-    ) {
-        val anchor =
-            style.layers.firstOrNull {
-                it is com.mappls.sdk.maps.style.layers.SymbolLayer && !isOursById(it.id)
-            }
-        if (anchor == null) {
-            style.addLayer(layer)
-            return
-        }
-        try {
-            style.addLayerBelow(layer, anchor.id)
-        } catch (_: Exception) {
-            style.addLayer(layer)
-        }
-    }
-
-    /** True for layers this SDK adds, as opposed to the design's own. */
-    private fun isOursById(id: String): Boolean =
-        id.startsWith("raster-layer-") ||
-            id.startsWith("org.maplibre.annotations") ||
-            id.startsWith("com.mappls.annotations") ||
-            id.startsWith(MARKERS_LAYER_ID) ||
-            id.startsWith("marker-drag-layer") ||
-            id.startsWith(POLYLINE_LAYER_ID) ||
-            id.startsWith("circle-layer")
 
     private fun buildSource(
         sourceId: String,
@@ -260,8 +197,6 @@ class MapplsRasterLayerOverlayRenderer(
 
     private companion object {
         private const val MARKER_TILE_RASTER_ID_PREFIX = "marker-tile-"
-        private const val MARKERS_LAYER_ID = "markers-layer"
-        private const val POLYLINE_LAYER_ID = "polyline-layer"
     }
 }
 

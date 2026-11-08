@@ -339,19 +339,14 @@ class MapplsViewController(
         styleInstance?.let { style ->
             renderer.ensureDefaultIcon(style)
             ensureGeoJsonSource(style, renderer.markerLayer.sourceId)
-            addLayerAboveSafely(
-                style = style,
-                layer = renderer.markerLayer.layer,
-                layerId = renderer.markerLayer.layerId,
-                aboveId = polylineController.renderer.layer.layerId,
+            MapplsOverlayStacking.add(
+                holder.map,
+                style,
+                renderer.markerLayer.layer,
+                MapplsOverlayStacking.key(com.mapconductor.core.controller.OverlayKind.Marker),
             )
             ensureGeoJsonSource(style, renderer.dragLayer.sourceId)
-            addLayerAboveSafely(
-                style = style,
-                layer = renderer.dragLayer.layer,
-                layerId = renderer.dragLayer.layerId,
-                aboveId = renderer.markerLayer.layerId,
-            )
+            MapplsOverlayStacking.add(holder.map, style, renderer.dragLayer.layer, MapplsOverlayStacking.MARKER_DRAG)
             renderer.redraw()
             renderer.drawDragLayer()
         }
