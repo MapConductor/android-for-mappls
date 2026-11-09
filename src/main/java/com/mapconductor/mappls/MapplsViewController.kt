@@ -28,7 +28,7 @@ import com.mapconductor.mappls.marker.MapplsMarkerController
 import com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer
 import com.mapconductor.mappls.marker.MarkerDragLayer
 import com.mapconductor.mappls.marker.MarkerLayer
-import com.mapconductor.mappls.polygon.MapplsPolygonConductor
+import com.mapconductor.mappls.polygon.MapplsPolygonController
 import com.mapconductor.mappls.polyline.MapplsPolylineController
 import com.mapconductor.mappls.raster.MapplsRasterLayerController
 import com.mappls.sdk.gestures.MoveGestureDetector
@@ -50,7 +50,7 @@ class MapplsViewController(
     override val holder: MapplsMapViewHolderInterface,
     internal val markerController: MapplsMarkerController,
     internal val polylineController: MapplsPolylineController,
-    internal val polygonController: MapplsPolygonConductor,
+    internal val polygonController: MapplsPolygonController,
     internal val groundImageController: MapplsGroundImageController,
     internal val circleController: MapplsCircleController,
     internal val rasterLayerController: MapplsRasterLayerController,
@@ -144,6 +144,8 @@ class MapplsViewController(
         groundImageController.clear()
         circleController.clear()
         rasterLayerController.clear()
+        // 拡張モジュール（クラスタリングなど）が登録した Strategy のマーカーも消す。
+        clearStrategyMarkerControllers()
     }
 
     override fun moveCamera(position: MapCameraPosition) = handleMoveCamera(position)
@@ -353,19 +355,14 @@ class MapplsViewController(
         styleInstance?.let { style ->
             renderer.ensureDefaultIcon(style)
             ensureGeoJsonSource(style, renderer.markerLayer.sourceId)
-            addLayerAboveSafely(
-                style = style,
-                layer = renderer.markerLayer.layer,
-                layerId = renderer.markerLayer.layerId,
-                aboveId = polylineController.renderer.layer.layerId,
+            MapplsOverlayStacking.add(
+                holder.map,
+                style,
+                renderer.markerLayer.layer,
+                MapplsOverlayStacking.key(com.mapconductor.core.controller.OverlayKind.Marker),
             )
             ensureGeoJsonSource(style, renderer.dragLayer.sourceId)
-            addLayerAboveSafely(
-                style = style,
-                layer = renderer.dragLayer.layer,
-                layerId = renderer.dragLayer.layerId,
-                aboveId = renderer.markerLayer.layerId,
-            )
+            MapplsOverlayStacking.add(holder.map, style, renderer.dragLayer.layer, MapplsOverlayStacking.MARKER_DRAG)
             renderer.redraw()
             renderer.drawDragLayer()
         }

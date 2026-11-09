@@ -1,5 +1,6 @@
 package com.mapconductor.mappls.groundimage
 
+import com.mapconductor.core.controller.OverlayKind
 import com.mapconductor.core.features.GeoRectBounds
 import com.mapconductor.core.groundimage.AbstractGroundImageOverlayRenderer
 import com.mapconductor.core.groundimage.GroundImageEntityInterface
@@ -7,6 +8,7 @@ import com.mapconductor.core.groundimage.GroundImageFingerPrint
 import com.mapconductor.core.groundimage.GroundImageState
 import com.mapconductor.mappls.MapplsActualGroundImage
 import com.mapconductor.mappls.MapplsMapViewHolderInterface
+import com.mapconductor.mappls.MapplsOverlayStacking
 import com.mappls.sdk.maps.Style
 import com.mappls.sdk.maps.geometry.LatLng
 import com.mappls.sdk.maps.geometry.LatLngQuad
@@ -104,25 +106,20 @@ class MapplsGroundImageOverlayRenderer(
             Log.w("Mappls", "Failed to add ground image source: ${e.message}")
         }
 
-        try {
-            style.addLayerBelow(layer, BELOW_LAYER_ID)
-        } catch (_: Exception) {
-            try {
-                style.addLayer(layer)
-            } catch (e: Exception) {
-                Log.w("Mappls", "Failed to add ground image layer: ${e.message}")
-            }
-        }
+        // GroundImage の帯（ラスターの上、ポリゴンの下）。送り直しても同じ位置。
+        MapplsOverlayStacking.add(
+            holder.map,
+            style,
+            layer,
+            MapplsOverlayStacking.key(OverlayKind.GroundImage),
+        )
     }
 
     private fun removeSourceAndLayerIfExists(
         style: Style,
         handle: MapplsGroundImageHandle,
     ) {
-        try {
-            style.removeLayer(handle.layerId)
-        } catch (_: Exception) {
-        }
+        MapplsOverlayStacking.remove(holder.map, style, handle.layerId)
         try {
             style.removeSource(handle.sourceId)
         } catch (_: Exception) {
@@ -185,7 +182,6 @@ class MapplsGroundImageOverlayRenderer(
             opacity = opacity,
         )
 
-    companion object {
-        private const val BELOW_LAYER_ID = "polyline-layer"
-    }
+    // 公開 API（Companion）の互換のために残している。
+    companion object
 }

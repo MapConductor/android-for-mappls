@@ -33,7 +33,8 @@ import com.mapconductor.mappls.marker.MapplsMarkerController
 import com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer
 import com.mapconductor.mappls.marker.MarkerDragLayer
 import com.mapconductor.mappls.marker.MarkerLayer
-import com.mapconductor.mappls.polygon.MapplsPolygonConductor
+import com.mapconductor.mappls.polygon.MapplsPolygonCompositeRenderer
+import com.mapconductor.mappls.polygon.MapplsPolygonController
 import com.mapconductor.mappls.polygon.MapplsPolygonLayer
 import com.mapconductor.mappls.polygon.MapplsPolygonOverlayRenderer
 import com.mapconductor.mappls.polyline.MapplsPolylineController
@@ -187,6 +188,11 @@ fun MapplsMapView(
         // For now, assuming content relates to overlay definitions.
         style = style,
         onStyleDiagnostics = onStyleDiagnostics,
+        // Never started (onStart is not called), so it is not stopped either --
+        // MapView.onStop() would deactivate the shared FileSource the next map
+        // still uses. Destroying it ends the render thread, whose camera
+        // listeners otherwise keep the controller and every overlay alive.
+        onDestroyMapView = { mapView -> mapView.onDestroy() },
         content = content, // This might need adjustment based on how overlays are handled
     )
 }
@@ -302,7 +308,7 @@ fun getPolylineController(holder: MapplsMapViewHolderInterface): MapplsPolylineC
     return controller
 }
 
-fun getPolygonController(holder: MapplsMapViewHolderInterface): MapplsPolygonConductor {
+fun getPolygonController(holder: MapplsMapViewHolderInterface): MapplsPolygonController {
     val polylineLayer =
         MapplsPolylineLayer(
             sourceId = "polygon-outline-source",
@@ -329,9 +335,12 @@ fun getPolygonController(holder: MapplsMapViewHolderInterface): MapplsPolygonCon
             holder = holder,
         )
 
-    return MapplsPolygonConductor(
-        polygonOverlay = polygonOverlayRenderer,
-        polylineOverlay = polylineOverlayRenderer,
+    return MapplsPolygonController(
+        renderer =
+            MapplsPolygonCompositeRenderer(
+                fill = polygonOverlayRenderer,
+                outline = polylineOverlayRenderer,
+            ),
     )
 }
 

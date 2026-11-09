@@ -1,5 +1,6 @@
 package com.mapconductor.mappls
 
+import com.mapconductor.core.controller.OverlayKind
 import com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer
 import com.mappls.sdk.maps.Style
 import com.mappls.sdk.maps.style.expressions.Expression
@@ -17,7 +18,9 @@ import kotlinx.coroutines.launch
  *
  * Mappls はスタイルが読み込み直されるたびにレイヤーが全部消えるため、ここは
  * 何度呼ばれても同じ状態になるように書いてある（`ensureGeoJsonSource` /
- * `addLayerSafely` はいずれも既存があれば作らない）。
+ * [MapplsOverlayStacking.add] はいずれも既存があれば作らない）。層の位置は
+ * [MapplsOverlayStacking] が帯の順（ラスター < GroundImage < ポリゴン < サークル <
+ * ポリライン < マーカー）で決める。
  *
  * ポリゴンの z 順は**レイヤーを z 値ごとに用意して**表現する。Mappls には
  * フィーチャー単位の z 指定が無く、レイヤーの並び順だけが順序を決めるため。
@@ -34,6 +37,7 @@ internal fun MapplsViewController.ensureGeoJsonSource(
     }
 }
 
+// 層の位置は MapplsOverlayStacking が決める。以下 2 つは公開 API の互換のために残している（SDK 内では未使用）。
 internal fun MapplsViewController.addLayerSafely(
     style: Style,
     layer: Layer,
@@ -81,54 +85,31 @@ internal fun MapplsViewController.setupStyle(style: Style) {
     (markerController.renderer as MapplsMarkerOverlayRenderer).ensureDefaultIcon(style)
 
     // Polygon sources only (layers will be added per zIndex)
-    ensureGeoJsonSource(style, polygonController.polylineOverlay.layer.sourceId)
-    ensureGeoJsonSource(style, polygonController.polygonOverlay.layer.sourceId)
+    ensureGeoJsonSource(style, polygonController.renderer.outline.layer.sourceId)
+    ensureGeoJsonSource(style, polygonController.renderer.fill.layer.sourceId)
 
-    // Circle cts as anchor above polygons
+    // 層の位置は MapplsOverlayStacking が帯の順で決める（追加の順に依らない）。
+    val stacking = MapplsOverlayStacking
+    val map = holder.map
+    val markerRenderer = markerController.renderer as MapplsMarkerOverlayRenderer
+
     ensureGeoJsonSource(style, circleController.renderer.layer.sourceId)
-    addLayerSafely(
-        style = style,
-        layer = circleController.renderer.layer.layer,
-        layerId = circleController.renderer.layer.layerId,
-    )
-    // Circle stroke (LineLayer) directly above the circle fill
-    addLayerAboveSafely(
-        style = style,
-        layer = circleController.renderer.layer.strokeLayer,
-        layerId = circleController.renderer.layer.strokeLayerId,
-        aboveId = circleController.renderer.layer.layerId,
-    )
+    stacking.add(map, style, circleController.renderer.layer.layer, stacking.key(OverlayKind.Circle))
+    // 線は塗りの直後（同じ鍵なら後から入れたものが上）。
+    stacking.add(map, style, circleController.renderer.layer.strokeLayer, stacking.key(OverlayKind.Circle))
 
-    // Polyline (general) acts as anchor above circles
     ensureGeoJsonSource(style, polylineController.renderer.layer.sourceId)
-    addLayerSafely(
-        style = style,
-        layer = polylineController.renderer.layer.layer,
-        layerId = polylineController.renderer.layer.layerId,
-    )
+    stacking.add(map, style, polylineController.renderer.layer.layer, stacking.key(OverlayKind.Polyline))
 
-    // Add z-indexed polygon layers below general polylines
     ensurePolygonZLayers(style)
 
-    // Marker - add source and layer at the top
-    ensureGeoJsonSource(style, (markerController.renderer as MapplsMarkerOverlayRenderer).markerLayer.sourceId)
-    addLayerAboveSafely(
-        style = style,
-        layer = (markerController.renderer as MapplsMarkerOverlayRenderer).markerLayer.layer,
-        layerId = (markerController.renderer as MapplsMarkerOverlayRenderer).markerLayer.layerId,
-        aboveId = polylineController.renderer.layer.layerId,
-    )
-    (markerController.renderer as MapplsMarkerOverlayRenderer).redraw()
+    ensureGeoJsonSource(style, markerRenderer.markerLayer.sourceId)
+    stacking.add(map, style, markerRenderer.markerLayer.layer, stacking.key(OverlayKind.Marker))
+    markerRenderer.redraw()
 
-    // Drag layer above marker layer
-    ensureGeoJsonSource(style, (markerController.renderer as MapplsMarkerOverlayRenderer).dragLayer.sourceId)
-    addLayerAboveSafely(
-        style = style,
-        layer = (markerController.renderer as MapplsMarkerOverlayRenderer).dragLayer.layer,
-        layerId = (markerController.renderer as MapplsMarkerOverlayRenderer).dragLayer.layerId,
-        aboveId = (markerController.renderer as MapplsMarkerOverlayRenderer).markerLayer.layerId,
-    )
-    (markerController.renderer as MapplsMarkerOverlayRenderer).redraw()
+    ensureGeoJsonSource(style, markerRenderer.dragLayer.sourceId)
+    stacking.add(map, style, markerRenderer.dragLayer.layer, stacking.MARKER_DRAG)
+    markerRenderer.redraw()
 
     markerEventControllers
         .map { it.renderer as MapplsMarkerOverlayRenderer }
@@ -136,19 +117,9 @@ internal fun MapplsViewController.setupStyle(style: Style) {
         .forEach { renderer ->
             renderer.ensureDefaultIcon(style)
             ensureGeoJsonSource(style, renderer.markerLayer.sourceId)
-            addLayerAboveSafely(
-                style = style,
-                layer = renderer.markerLayer.layer,
-                layerId = renderer.markerLayer.layerId,
-                aboveId = polylineController.renderer.layer.layerId,
-            )
+            stacking.add(map, style, renderer.markerLayer.layer, stacking.key(OverlayKind.Marker))
             ensureGeoJsonSource(style, renderer.dragLayer.sourceId)
-            addLayerAboveSafely(
-                style = style,
-                layer = renderer.dragLayer.layer,
-                layerId = renderer.dragLayer.layerId,
-                aboveId = renderer.markerLayer.layerId,
-            )
+            stacking.add(map, style, renderer.dragLayer.layer, stacking.MARKER_DRAG)
             renderer.redraw()
             renderer.drawDragLayer()
         }
@@ -157,7 +128,7 @@ internal fun MapplsViewController.setupStyle(style: Style) {
     (markerController.renderer as MapplsMarkerOverlayRenderer).redraw()
     circleController.renderer.redraw()
     polylineController.renderer.redraw()
-//        polygonController.polygonOverlay.onPostProcess()
+//        polygonController.renderer.fill.onPostProcess()
     mainCoroutine.launch {
         groundImageController.reapplyStyle()
         rasterLayerController.reapplyStyle()
@@ -165,12 +136,11 @@ internal fun MapplsViewController.setupStyle(style: Style) {
 }
 
 internal fun MapplsViewController.ensurePolygonZLayers(style: Style) {
-    val fillSourceId = polygonController.polygonOverlay.layer.sourceId
-    val outlineSourceId = polygonController.polylineOverlay.layer.sourceId
-    val anchorId = polylineController.renderer.layer.layerId
+    val fillSourceId = polygonController.renderer.fill.layer.sourceId
+    val outlineSourceId = polygonController.renderer.outline.layer.sourceId
 
     val zSet =
-        polygonController.polygonOverlay.polygonManager
+        polygonController.polygonManager
             .allEntities()
             .map { it.state.zIndex }
             .toSet()
@@ -180,14 +150,8 @@ internal fun MapplsViewController.ensurePolygonZLayers(style: Style) {
     toRemove.forEach { z ->
         val fillId = "polygon-fill-layer-$z"
         val outlineId = "polygon-outline-layer-$z"
-        try {
-            style.removeLayer(outlineId)
-        } catch (_: Exception) {
-        }
-        try {
-            style.removeLayer(fillId)
-        } catch (_: Exception) {
-        }
+        MapplsOverlayStacking.remove(holder.map, style, outlineId)
+        MapplsOverlayStacking.remove(holder.map, style, fillId)
     }
 
     val zList = zSet.toList().sorted()
@@ -213,11 +177,7 @@ internal fun MapplsViewController.ensurePolygonZLayers(style: Style) {
                         ),
                     )
                 }
-            try {
-                style.addLayerBelow(fill, anchorId)
-            } catch (_: Exception) {
-                style.addLayer(fill)
-            }
+            MapplsOverlayStacking.add(holder.map, style, fill, MapplsOverlayStacking.key(OverlayKind.Polygon, z))
         }
 
         if (style.getLayer(outlineId) == null) {
@@ -246,11 +206,8 @@ internal fun MapplsViewController.ensurePolygonZLayers(style: Style) {
                         ),
                     )
                 }
-            try {
-                style.addLayerAbove(outline, fillId)
-            } catch (_: Exception) {
-                style.addLayer(outline)
-            }
+            // 塗りの直後（同じ鍵なら後から入れたものが上）。
+            MapplsOverlayStacking.add(holder.map, style, outline, MapplsOverlayStacking.key(OverlayKind.Polygon, z))
         }
     }
     polygonZLayers.clear()
