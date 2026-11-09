@@ -2,6 +2,7 @@ package com.mapconductor.mappls.raster
 
 import com.mapconductor.core.controller.OverlayKind
 import com.mapconductor.core.polygon.POLYGON_TILE_LAYER_ID
+import com.mapconductor.core.polyline.POLYLINE_TILE_LAYER_ID
 import com.mapconductor.core.raster.RasterLayerEntityInterface
 import com.mapconductor.core.raster.RasterLayerOverlayRendererInterface
 import com.mapconductor.core.raster.RasterLayerSource
@@ -28,6 +29,8 @@ class MapplsRasterLayerOverlayRenderer(
     private fun isMarkerTileRaster(state: RasterLayerState): Boolean = state.id.startsWith(MARKER_TILE_RASTER_ID_PREFIX)
 
     private fun isPolygonTileRaster(state: RasterLayerState): Boolean = state.id == POLYGON_TILE_LAYER_ID
+
+    private fun isPolylineTileRaster(state: RasterLayerState): Boolean = state.id == POLYLINE_TILE_LAYER_ID
 
     override suspend fun onAdd(
         data: List<RasterLayerOverlayRendererInterface.AddParamsInterface>,
@@ -117,6 +120,8 @@ class MapplsRasterLayerOverlayRenderer(
                 MapplsOverlayStacking.MARKER_TILE
             } else if (isPolygonTileRaster(state)) {
                 MapplsOverlayStacking.POLYGON_TILE
+            } else if (isPolylineTileRaster(state)) {
+                MapplsOverlayStacking.POLYLINE_TILE
             } else {
                 MapplsOverlayStacking.key(OverlayKind.RasterLayer, state.zIndex)
             }
@@ -152,7 +157,7 @@ class MapplsRasterLayerOverlayRenderer(
         val ordered =
             stateById.values
                 .asSequence()
-                .filter { !isMarkerTileRaster(it) && !isPolygonTileRaster(it) }
+                .filter { !isMarkerTileRaster(it) && !isPolygonTileRaster(it) && !isPolylineTileRaster(it) }
                 .sortedBy { it.zIndex }
                 .mapNotNull { state -> handleById[state.id]?.let { handle -> state to handle } }
                 .toList()
