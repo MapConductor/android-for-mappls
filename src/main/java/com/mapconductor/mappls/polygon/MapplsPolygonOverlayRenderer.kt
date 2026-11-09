@@ -80,13 +80,16 @@ class MapplsPolygonOverlayRenderer(
         return polygon
     }
 
+    // Polygons drawn as tiles (PolygonController.tiler) stay in the manager, for
+    // taps, with no features: their entity's polygon is null.
+    @Suppress("USELESS_CAST")
     private fun getAllPolygonEntities(): List<PolygonEntityInterface<MapplsActualPolygon>> =
-        polygonManager.allEntities()
+        polygonManager.allEntities().filter { (it.polygon as MapplsActualPolygon?) != null }
 
     private fun getRemainingPolygonEntities(
         removed: List<PolygonEntityInterface<MapplsActualPolygon>>,
     ): List<PolygonEntityInterface<MapplsActualPolygon>> {
         val removedIds = removed.mapTo(HashSet()) { it.state.id }
-        return polygonManager.allEntities().filter { it.state.id !in removedIds }
+        return getAllPolygonEntities().filter { it.state.id !in removedIds }
     }
 }

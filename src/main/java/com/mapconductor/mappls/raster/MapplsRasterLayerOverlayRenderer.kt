@@ -1,6 +1,7 @@
 package com.mapconductor.mappls.raster
 
 import com.mapconductor.core.controller.OverlayKind
+import com.mapconductor.core.polygon.POLYGON_TILE_LAYER_ID
 import com.mapconductor.core.raster.RasterLayerEntityInterface
 import com.mapconductor.core.raster.RasterLayerOverlayRendererInterface
 import com.mapconductor.core.raster.RasterLayerSource
@@ -25,6 +26,8 @@ class MapplsRasterLayerOverlayRenderer(
     private val handleById: MutableMap<String, MapplsRasterLayerHandle> = mutableMapOf()
 
     private fun isMarkerTileRaster(state: RasterLayerState): Boolean = state.id.startsWith(MARKER_TILE_RASTER_ID_PREFIX)
+
+    private fun isPolygonTileRaster(state: RasterLayerState): Boolean = state.id == POLYGON_TILE_LAYER_ID
 
     override suspend fun onAdd(
         data: List<RasterLayerOverlayRendererInterface.AddParamsInterface>,
@@ -101,7 +104,8 @@ class MapplsRasterLayerOverlayRenderer(
 
     /**
      * 帯の順（[MapplsOverlayStacking]）で足す。アプリのラスターはラスターの帯
-     * （一番下、ベースマップのラベルの下）、マーカーのタイルはマーカーの帯の一番下。
+     * （一番下、ベースマップのラベルの下）、マーカーのタイルはマーカーの帯の一番下、
+     * ポリゴンのタイルはポリゴンの帯の一番下（画像になったポリゴンであって、地図の画像ではない）。
      */
     private fun addToStack(
         style: com.mappls.sdk.maps.Style,
@@ -111,6 +115,8 @@ class MapplsRasterLayerOverlayRenderer(
         val key =
             if (isMarkerTileRaster(state)) {
                 MapplsOverlayStacking.MARKER_TILE
+            } else if (isPolygonTileRaster(state)) {
+                MapplsOverlayStacking.POLYGON_TILE
             } else {
                 MapplsOverlayStacking.key(OverlayKind.RasterLayer, state.zIndex)
             }
@@ -146,7 +152,7 @@ class MapplsRasterLayerOverlayRenderer(
         val ordered =
             stateById.values
                 .asSequence()
-                .filter { !isMarkerTileRaster(it) }
+                .filter { !isMarkerTileRaster(it) && !isPolygonTileRaster(it) }
                 .sortedBy { it.zIndex }
                 .mapNotNull { state -> handleById[state.id]?.let { handle -> state to handle } }
                 .toList()

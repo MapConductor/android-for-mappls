@@ -113,6 +113,7 @@ public final class com.mapconductor.mappls.MapplsOverlayStacking {
   public final com.mapconductor.core.controller.OverlayLayerStack stackOf(com.mappls.sdk.maps.MapplsMap);
   public final com.mapconductor.core.controller.OverlayStacking$Key key(com.mapconductor.core.controller.OverlayKind, int);
   public final com.mapconductor.core.controller.OverlayStacking$Key getMARKER_TILE();
+  public final com.mapconductor.core.controller.OverlayStacking$Key getPOLYGON_TILE();
   public final com.mapconductor.core.controller.OverlayStacking$Key getMARKER_DRAG();
   public final void add(com.mappls.sdk.maps.MapplsMap, com.mappls.sdk.maps.Style, com.mappls.sdk.maps.style.layers.Layer, com.mapconductor.core.controller.OverlayStacking$Key);
   public final void remove(com.mappls.sdk.maps.MapplsMap, com.mappls.sdk.maps.Style, java.lang.String);
@@ -312,6 +313,9 @@ public final class com.mapconductor.mappls.marker.MapplsMarkerController extends
   public void destroy();
   public java.lang.Object update(java.lang.Object, kotlin.coroutines.Continuation);
 }
+final class com.mapconductor.mappls.marker.MapplsMarkerController$Companion {
+  public final long getTILE_REFRESH_COALESCE-UwyO8pc();
+}
 public final class com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer extends com.mapconductor.core.marker.AbstractMarkerOverlayRenderer<com.mapconductor.mappls.MapplsMapViewHolderInterface, com.mappls.sdk.geojson.Feature> {
   public com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer(com.mapconductor.mappls.MapplsMapViewHolderInterface, com.mapconductor.core.marker.MarkerManager<com.mappls.sdk.geojson.Feature>, com.mapconductor.mappls.marker.MarkerLayer, com.mapconductor.mappls.marker.MarkerDragLayer, kotlinx.coroutines.CoroutineScope);
   public com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer(com.mapconductor.mappls.MapplsMapViewHolderInterface, com.mapconductor.core.marker.MarkerManager, com.mapconductor.mappls.marker.MarkerLayer, com.mapconductor.mappls.marker.MarkerDragLayer, kotlinx.coroutines.CoroutineScope, int, kotlin.jvm.internal.DefaultConstructorMarker);
@@ -389,6 +393,7 @@ public final class com.mapconductor.mappls.polygon.MapplsPolygonController exten
   public com.mapconductor.mappls.polygon.MapplsPolygonController(com.mapconductor.mappls.polygon.MapplsPolygonCompositeRenderer);
   public com.mapconductor.mappls.polygon.MapplsPolygonCompositeRenderer getRenderer();
   public int getZIndex();
+  public void destroy();
   public com.mapconductor.core.polygon.PolygonOverlayRendererInterface getRenderer();
 }
 public final class com.mapconductor.mappls.polygon.MapplsPolygonLayer {

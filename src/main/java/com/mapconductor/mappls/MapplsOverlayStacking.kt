@@ -14,7 +14,8 @@ import java.util.WeakHashMap
  * オーバーレイの層をスタイルのどこへ入れるか（[OverlayStacking] の帯の順）。
  *
  * 下から: ラスター < GroundImage < ポリゴン < サークル < ポリライン < マーカー
- * （マーカーのタイルはマーカーの帯の一番下、ドラッグ中の層は一番上）。
+ * （マーカーのタイルはマーカーの帯の一番下、ドラッグ中の層は一番上。
+ * ポリゴンのタイルはポリゴンの帯の一番下）。
  *
  * 位置は毎回スタイルの今の並びから決めるので、追加した順・送り直し・
  * スタイルの読み直し（デザイン変更）に左右されない。
@@ -34,6 +35,9 @@ internal object MapplsOverlayStacking {
 
     /** マーカーのタイル（ラスター）: マーカーの帯の一番下。 */
     val MARKER_TILE = key(OverlayKind.Marker, Int.MIN_VALUE)
+
+    /** ポリゴンのタイル（ラスター）: ポリゴンの帯の一番下。 */
+    val POLYGON_TILE = key(OverlayKind.Polygon, Int.MIN_VALUE)
 
     /** ドラッグ中のマーカーの層: マーカーの帯の一番上。 */
     val MARKER_DRAG = key(OverlayKind.Marker, Int.MAX_VALUE)
