@@ -22,6 +22,9 @@ import com.mapconductor.core.polygon.PolygonState
 import com.mapconductor.core.polygon.PolygonTiler
 import com.mapconductor.core.polygon.polygonTileRasterLayerState
 import com.mapconductor.core.polyline.OnPolylineEventHandler
+import com.mapconductor.core.polyline.POLYLINE_TILE_LAYER_ID
+import com.mapconductor.core.polyline.PolylineTiler
+import com.mapconductor.core.polyline.polylineTileRasterLayerState
 import com.mapconductor.mappls.circle.MapplsCircleController
 import com.mapconductor.mappls.groundimage.MapplsGroundImageController
 import com.mapconductor.mappls.marker.MapplsMarkerController
@@ -118,6 +121,18 @@ class MapplsViewController(
                         rasterLayerController.upsert(polygonTileRasterLayerState(template, tileSize))
                     } else {
                         rasterLayerController.removeById(POLYGON_TILE_LAYER_ID)
+                    }
+                }
+            }
+
+        // Many polylines too: the same raster layer path, in the polyline band.
+        polylineController.tiler =
+            PolylineTiler().apply {
+                onTemplate = { template, tileSize ->
+                    if (template != null) {
+                        rasterLayerController.upsert(polylineTileRasterLayerState(template, tileSize))
+                    } else {
+                        rasterLayerController.removeById(POLYLINE_TILE_LAYER_ID)
                     }
                 }
             }
