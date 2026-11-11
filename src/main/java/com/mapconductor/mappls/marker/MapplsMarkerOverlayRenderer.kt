@@ -3,12 +3,12 @@ package com.mapconductor.mappls.marker
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.mapconductor.core.ResourceProvider
-import com.mapconductor.core.calculateZIndex
 import com.mapconductor.core.features.GeoPoint
 import com.mapconductor.core.features.GeoPointInterface
 import com.mapconductor.core.marker.AbstractMarkerOverlayRenderer
 import com.mapconductor.core.marker.BitmapIcon
 import com.mapconductor.core.marker.DefaultMarkerIcon
+import com.mapconductor.core.marker.MarkerDrawOrder
 import com.mapconductor.core.marker.MarkerEntityInterface
 import com.mapconductor.core.marker.MarkerIconInterface
 import com.mapconductor.core.marker.MarkerManager
@@ -149,17 +149,7 @@ class MapplsMarkerOverlayRenderer(
     ) {
         val entities = markerManager.allEntities()
         val props = (markerEntity.marker?.properties() ?: JsonObject()).deepCopy()
-        val previousZIndex =
-            props
-                .get(Prop.Z_INDEX)
-                ?.takeIf { it.isJsonPrimitive && it.asJsonPrimitive.isNumber }
-                ?.asInt
-        props.addProperty(
-            Prop.Z_INDEX,
-            markerEntity.state.zIndex
-                ?: previousZIndex
-                ?: calculateZIndex(position),
-        )
+        props.addProperty(Prop.Z_INDEX, MarkerDrawOrder.of(markerEntity.state.zIndex, position))
         val feature =
             Feature.fromGeometry(
                 position.toPoint(),
@@ -219,7 +209,7 @@ class MapplsMarkerOverlayRenderer(
                         }
                         // We don't use the Mappls SDK's scaling system
                         // addProperty(Prop.SCALE, 1.0)
-                        addProperty(Prop.Z_INDEX, it.state.zIndex ?: calculateZIndex(it.state.position))
+                        addProperty(Prop.Z_INDEX, MarkerDrawOrder.of(it.state.zIndex, it.state.position))
                     }
                 Feature.fromGeometry(position, properties, featureId)
             }
@@ -366,11 +356,7 @@ class MapplsMarkerOverlayRenderer(
                         }
                         addProperty(
                             Prop.Z_INDEX,
-                            resolveZIndexForChange(
-                                current = params.current,
-                                prev = params.prev,
-                                prevProperties = prevProperties,
-                            ),
+                            MarkerDrawOrder.of(params.current.state.zIndex, params.current.state.position),
                         )
                     }
 
@@ -380,24 +366,6 @@ class MapplsMarkerOverlayRenderer(
                 Feature.fromGeometry(position, properties, featureId)
             }
         }
-
-    private fun resolveZIndexForChange(
-        current: MarkerEntityInterface<MapplsActualMarker>,
-        prev: MarkerEntityInterface<MapplsActualMarker>,
-        prevProperties: JsonObject?,
-    ): Int {
-        current.state.zIndex?.let { return it }
-
-        if (current.fingerPrint.zIndex == prev.fingerPrint.zIndex) {
-            prevProperties
-                ?.get(Prop.Z_INDEX)
-                ?.takeIf { it.isJsonPrimitive && it.asJsonPrimitive.isNumber }
-                ?.asInt
-                ?.let { return it }
-        }
-
-        return calculateZIndex(current.state.position)
-    }
 
     /**
      * ドラッグ対象の入れ替え。
