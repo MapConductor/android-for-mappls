@@ -149,7 +149,7 @@ class MapplsMarkerOverlayRenderer(
     ) {
         val entities = markerManager.allEntities()
         val props = (markerEntity.marker?.properties() ?: JsonObject()).deepCopy()
-        props.addProperty(Prop.Z_INDEX, MarkerDrawOrder.of(markerEntity.state.zIndex, position))
+        props.addProperty(Prop.Z_INDEX, MarkerDrawOrder.of(markerEntity.state.zIndex, position, drawOrderFrame))
         val feature =
             Feature.fromGeometry(
                 position.toPoint(),
@@ -209,7 +209,7 @@ class MapplsMarkerOverlayRenderer(
                         }
                         // We don't use the Mappls SDK's scaling system
                         // addProperty(Prop.SCALE, 1.0)
-                        addProperty(Prop.Z_INDEX, MarkerDrawOrder.of(it.state.zIndex, it.state.position))
+                        addProperty(Prop.Z_INDEX, drawOrderOf(it.state))
                     }
                 Feature.fromGeometry(position, properties, featureId)
             }
@@ -256,6 +256,18 @@ class MapplsMarkerOverlayRenderer(
             coroutine.launch {
                 markerLayer.draw(entities, it)
             }
+        }
+    }
+
+    // 地図が回ったら、各フィーチャーの並び順キー（symbol-sort-key）を付け直して流し直す。
+    override suspend fun applyDrawOrder(entities: List<MarkerEntityInterface<MapplsActualMarker>>) {
+        val target = entities.filter { !it.tiling }
+        withContext(Dispatchers.Main) {
+            target.forEach { entity ->
+                entity.marker?.properties()?.addProperty(Prop.Z_INDEX, drawOrderOf(entity.state))
+            }
+            val style = holder.map.style ?: return@withContext
+            markerLayer.draw(target, style)
         }
     }
 
@@ -356,7 +368,7 @@ class MapplsMarkerOverlayRenderer(
                         }
                         addProperty(
                             Prop.Z_INDEX,
-                            MarkerDrawOrder.of(params.current.state.zIndex, params.current.state.position),
+                            drawOrderOf(params.current.state),
                         )
                     }
 
