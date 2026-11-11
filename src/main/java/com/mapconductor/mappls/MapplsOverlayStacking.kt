@@ -39,6 +39,9 @@ internal object MapplsOverlayStacking {
     /** ポリゴンのタイル（ラスター）: ポリゴンの帯の一番下。 */
     val POLYGON_TILE = key(OverlayKind.Polygon, Int.MIN_VALUE)
 
+    /** 円のタイル（ラスター）: サークルの帯の一番下（ポリゴンの上、ネイティブの円とポリラインのタイルの下）。 */
+    val CIRCLE_TILE = key(OverlayKind.Circle, Int.MIN_VALUE)
+
     /** ポリラインのタイル（ラスター）: ポリラインの帯の一番下（サークルの上、ネイティブのポリラインの下）。 */
     val POLYLINE_TILE = key(OverlayKind.Polyline, Int.MIN_VALUE)
 
