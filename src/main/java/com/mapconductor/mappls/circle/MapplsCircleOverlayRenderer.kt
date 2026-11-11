@@ -42,7 +42,7 @@ class MapplsCircleOverlayRenderer(
 
     /** Reapply the current composition after a Mappls style is created or replaced. */
     fun redraw() {
-        val circles = circleManager.allEntities()
+        val circles = circleManager.nativeEntities().filter { (it.circle as MapplsActualCircle?) != null }
         holder.map.style?.let { style ->
             coroutine.launch { layer.draw(circles, style) }
         }
