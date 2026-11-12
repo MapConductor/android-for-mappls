@@ -332,6 +332,7 @@ public final class com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer ex
   public java.lang.Object onRemove(java.util.List<? extends com.mapconductor.core.marker.MarkerEntityInterface<com.mappls.sdk.geojson.Feature>>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
   public final void drawDragLayer();
   public final void redraw();
+  protected java.lang.Object applyDrawOrder(java.util.List<? extends com.mapconductor.core.marker.MarkerEntityInterface<com.mappls.sdk.geojson.Feature>>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
   public java.lang.Object onPostProcess(kotlin.coroutines.Continuation<? super kotlin.Unit>);
   public java.lang.Object onChange(java.util.List<? extends com.mapconductor.core.marker.MarkerOverlayRendererInterface$ChangeParamsInterface<com.mappls.sdk.geojson.Feature>>, kotlin.coroutines.Continuation<? super java.util.List<com.mappls.sdk.geojson.Feature>>);
   public void onDragSelectionChanged(com.mapconductor.core.marker.MarkerEntityInterface<com.mappls.sdk.geojson.Feature>, com.mapconductor.core.marker.MarkerEntityInterface<com.mappls.sdk.geojson.Feature>);
