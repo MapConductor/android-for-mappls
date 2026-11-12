@@ -10,19 +10,27 @@ public final class com.mapconductor.mappls.GeoRectBoundsKt {
   public static final com.mapconductor.core.features.GeoRectBounds toGeoRectBounds(com.mappls.sdk.maps.geometry.LatLngBounds);
 }
 public final class com.mapconductor.mappls.MapCameraPositionKt {
+  public static final double MAPPLS_VERTICAL_FOV;
+  public static final double[] toMapplsPadding(com.mapconductor.core.map.MapPaddingsInterface, float);
+  public static final com.mapconductor.core.map.MapPaddings toMapPaddings(double[], float);
   public static final com.mappls.sdk.maps.camera.CameraPosition toCameraPosition(com.mapconductor.core.map.MapCameraPosition);
+  public static final com.mappls.sdk.maps.camera.CameraPosition toCameraPosition(com.mapconductor.core.map.MapCameraPosition, java.lang.Float);
   public static final com.mapconductor.core.map.MapCameraPosition from(com.mapconductor.core.map.MapCameraPosition$Companion, com.mapconductor.core.map.MapCameraPositionInterface);
   public static final com.mapconductor.core.map.MapCameraPosition toMapCameraPosition(com.mappls.sdk.maps.camera.CameraPosition);
   public static final com.mapconductor.core.map.MapCameraPosition toMapCameraPosition(com.mappls.sdk.maps.camera.CameraPosition, java.lang.Double);
+  public static final com.mapconductor.core.map.MapCameraPosition toMapCameraPosition(com.mappls.sdk.maps.camera.CameraPosition, java.lang.Double, java.lang.Float);
 }
 public final class com.mapconductor.mappls.MapplsCameraStateSnapshot {
-  public com.mapconductor.mappls.MapplsCameraStateSnapshot(com.mappls.sdk.maps.camera.CameraPosition, java.lang.Double);
+  public com.mapconductor.mappls.MapplsCameraStateSnapshot(com.mappls.sdk.maps.camera.CameraPosition, java.lang.Double, java.lang.Float);
+  public com.mapconductor.mappls.MapplsCameraStateSnapshot(com.mappls.sdk.maps.camera.CameraPosition, java.lang.Double, java.lang.Float, int, kotlin.jvm.internal.DefaultConstructorMarker);
   public final com.mappls.sdk.maps.camera.CameraPosition getCameraPosition();
   public final java.lang.Double getLogicalTiltHint();
+  public final java.lang.Float getDensity();
   public final com.mapconductor.core.map.MapCameraPosition toMapCameraPosition();
   public final com.mappls.sdk.maps.camera.CameraPosition component1();
   public final java.lang.Double component2();
-  public final com.mapconductor.mappls.MapplsCameraStateSnapshot copy(com.mappls.sdk.maps.camera.CameraPosition, java.lang.Double);
+  public final java.lang.Float component3();
+  public final com.mapconductor.mappls.MapplsCameraStateSnapshot copy(com.mappls.sdk.maps.camera.CameraPosition, java.lang.Double, java.lang.Float);
   public java.lang.String toString();
   public int hashCode();
   public boolean equals(java.lang.Object);
@@ -171,6 +179,7 @@ public final class com.mapconductor.mappls.MapplsViewController extends com.mapc
 }
 public final class com.mapconductor.mappls.MapplsViewControllerCameraKt {
   public static final com.mapconductor.core.map.MapCameraPosition readLogicalCameraPosition(com.mapconductor.mappls.MapplsViewController);
+  public static final float density(com.mapconductor.mappls.MapplsViewController);
   public static final com.mapconductor.core.map.MapCameraPosition getMapCameraPosition(com.mapconductor.mappls.MapplsViewController, com.mapconductor.core.map.MapCameraPositionInterface);
   public static final void handleMoveCamera(com.mapconductor.mappls.MapplsViewController, com.mapconductor.core.map.MapCameraPosition);
   public static final void handleAnimateCamera(com.mapconductor.mappls.MapplsViewController, com.mapconductor.core.map.MapCameraPosition, long);
