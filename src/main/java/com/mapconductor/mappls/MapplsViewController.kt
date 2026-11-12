@@ -10,6 +10,8 @@ import com.mapconductor.core.features.GeoRectBounds
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
+import com.mapconductor.core.map.MapPaddings
+import com.mapconductor.core.map.MapPaddingsInterface
 import com.mapconductor.core.map.MapUISettings
 import com.mapconductor.core.marker.DefaultMarkerEventController
 import com.mapconductor.core.marker.MarkerAnimationOverlayHost
@@ -84,6 +86,9 @@ class MapplsViewController(
     internal var markerAnimateEndListener: OnMarkerEventHandler? = null
 
     internal var lastLogicalCameraPosition: MapCameraPosition? = null
+
+    /** アプリが指定したパディング（dp）。ネイティブには渡さず、中心のずらしで再現する。 */
+    internal var cameraPaddings: MapPaddingsInterface = MapPaddings.Zeros
 
     init {
         // Style should already be loaded by holderProvider

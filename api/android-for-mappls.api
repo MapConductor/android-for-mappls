@@ -179,6 +179,8 @@ public final class com.mapconductor.mappls.MapplsViewController extends com.mapc
 }
 public final class com.mapconductor.mappls.MapplsViewControllerCameraKt {
   public static final com.mapconductor.core.map.MapCameraPosition readLogicalCameraPosition(com.mapconductor.mappls.MapplsViewController);
+  public static final double viewportHeightDp(com.mapconductor.mappls.MapplsViewController);
+  public static final com.mapconductor.core.map.MapCameraPosition toNativeCamera(com.mapconductor.mappls.MapplsViewController, com.mapconductor.core.map.MapCameraPosition);
   public static final float density(com.mapconductor.mappls.MapplsViewController);
   public static final com.mapconductor.core.map.MapCameraPosition getMapCameraPosition(com.mapconductor.mappls.MapplsViewController, com.mapconductor.core.map.MapCameraPositionInterface);
   public static final void handleMoveCamera(com.mapconductor.mappls.MapplsViewController, com.mapconductor.core.map.MapCameraPosition);
