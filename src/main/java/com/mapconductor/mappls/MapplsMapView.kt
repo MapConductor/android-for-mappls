@@ -89,7 +89,7 @@ fun MapplsMapView(
         modifier = modifier,
         viewProvider = {
             val cameraPosition =
-                state.cameraPosition.toCameraPosition()
+                state.cameraPosition.toCameraPosition(context.resources.displayMetrics.density)
             val mapInitOptions =
                 MapplsMapOptions
                     .createFromAttributes(context)
