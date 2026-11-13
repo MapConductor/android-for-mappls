@@ -1,8 +1,11 @@
 package com.mapconductor.mappls
 
 import com.mapconductor.core.features.GeoPoint
+import com.mapconductor.core.map.CameraBearing
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
+import com.mapconductor.core.map.MapPaddings
+import com.mapconductor.core.map.MapPaddingsInterface
 import com.mapconductor.core.spherical.Spherical
 import com.mapconductor.mappls.zoom.ZoomAltitudeConverter
 import com.mappls.sdk.maps.camera.CameraPosition
@@ -11,19 +14,48 @@ import kotlin.math.cos
 import kotlin.math.tan
 
 private val converter = ZoomAltitudeConverter()
+
+/**
+ * Mappls のカメラの縦方向の視野角（度）。Mappls は MapLibre Native 派生で、既定値は地図の大きさに
+ * よらず一定（焦点距離 = 地図の高さ × 1.5）。TB520FU で 36.9° を実測。
+ */
+internal const val MAPPLS_VERTICAL_FOV = 36.87
+
+/** dp のパディング → Mappls の px のパディング（left, top, right, bottom）。 */
+internal fun MapPaddingsInterface.toMapplsPadding(density: Float): DoubleArray =
+    doubleArrayOf(left * density, top * density, right * density, bottom * density)
+
+/** Mappls の px のパディング（left, top, right, bottom）→ dp のパディング。 */
+internal fun DoubleArray.toMapPaddings(density: Float): MapPaddings? {
+    if (size < 4 || density <= 0f) return null
+    return MapPaddings(
+        top = this[1] / density,
+        left = this[0] / density,
+        bottom = this[3] / density,
+        right = this[2] / density,
+    )
+}
+
 private const val NEGATIVE_TILT_TARGET_DISTANCE_SCALE = 1.83
 private const val NEGATIVE_TILT_ZOOM_OFFSET_AT_MAX_TILT = -0.9
 
-fun MapCameraPosition.toCameraPosition(): CameraPosition {
+fun MapCameraPosition.toCameraPosition(): CameraPosition = toCameraPosition(density = null)
+
+/**
+ * [density] があれば [MapCameraPosition.paddings] を Mappls のパディングとして渡す。
+ * Mappls はパディングを除いた領域の中央にカメラの中心を置き、tilt の遠近もエンジンが解く。
+ * Mappls のパディングは次に変えるまで残るので、null（未指定）のときは渡さない。
+ */
+internal fun MapCameraPosition.toCameraPosition(density: Float?): CameraPosition {
+    val padding = if (density != null) paddings?.toMapplsPadding(density) else null
     if (tilt >= 0) {
         return CameraPosition
             .Builder()
             .target(GeoPoint.from(position).toLatLng())
             .zoom(ZoomAltitudeConverter.googleZoomToMapplsZoom(zoom))
             .tilt(tilt)
-            .bearing(bearing)
-            // TODO:
-//    .padding(paddings?.toEdgeInsects())
+            .bearing(CameraBearing.toNativeHeading(bearing))
+            .apply { padding?.let { padding(it) } }
             .build()
     } else {
         // tilt < 0: Mappls cannot represent an upward pitch directly.
@@ -37,7 +69,7 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
                 cos(tiltAbsRad) *
                 tan(tiltAbsRad) *
                 NEGATIVE_TILT_TARGET_DISTANCE_SCALE
-        val target = Spherical.computeOffset(position, distanceForward, bearing)
+        val target = Spherical.computeOffset(position, distanceForward, CameraBearing.toNativeHeading(bearing))
         val adjustedZoom = zoom + NEGATIVE_TILT_ZOOM_OFFSET_AT_MAX_TILT * (tiltAbsDeg / 60.0)
 
         return CameraPosition
@@ -45,9 +77,8 @@ fun MapCameraPosition.toCameraPosition(): CameraPosition {
             .target(target.toLatLng())
             .zoom(ZoomAltitudeConverter.googleZoomToMapplsZoom(adjustedZoom))
             .tilt(tiltAbsDeg)
-            .bearing(bearing)
-            // TODO:
-//    .padding(paddings?.toEdgeInsects())
+            .bearing(CameraBearing.toNativeHeading(bearing))
+            .apply { padding?.let { padding(it) } }
             .build()
     }
 }
@@ -61,7 +92,9 @@ fun MapCameraPosition.Companion.from(cameraPosition: MapCameraPositionInterface)
                 zoom = cameraPosition.zoom,
                 bearing = cameraPosition.bearing,
                 tilt = cameraPosition.tilt,
+                paddings = cameraPosition.paddings,
                 visibleRegion = cameraPosition.visibleRegion,
+                fov = cameraPosition.fov,
             )
     }
 
@@ -70,11 +103,20 @@ fun CameraPosition.toMapCameraPosition() = toMapCameraPosition(logicalTiltHint =
 internal data class MapplsCameraStateSnapshot(
     val cameraPosition: CameraPosition,
     val logicalTiltHint: Double?,
+    val density: Float? = null,
 ) {
-    fun toMapCameraPosition(): MapCameraPosition = cameraPosition.toMapCameraPosition(logicalTiltHint)
+    fun toMapCameraPosition(): MapCameraPosition = cameraPosition.toMapCameraPosition(logicalTiltHint, density)
 }
 
-internal fun CameraPosition.toMapCameraPosition(logicalTiltHint: Double?): MapCameraPosition {
+internal fun CameraPosition.toMapCameraPosition(logicalTiltHint: Double?): MapCameraPosition =
+    toMapCameraPosition(logicalTiltHint, density = null)
+
+/** [density] があれば Mappls のパディングを dp に直して paddings として返す。 */
+internal fun CameraPosition.toMapCameraPosition(
+    logicalTiltHint: Double?,
+    density: Float?,
+): MapCameraPosition {
+    val paddings = density?.let { d -> padding?.toMapPaddings(d) } ?: MapPaddings.Zeros
     val pitch = tilt
     val pitchAbsDeg = abs(pitch).coerceIn(0.0, 60.0)
 
@@ -82,9 +124,11 @@ internal fun CameraPosition.toMapCameraPosition(logicalTiltHint: Double?): MapCa
         return MapCameraPosition(
             position = target?.toGeoPoint() ?: GeoPoint.fromLongLat(0.0, 0.0),
             zoom = ZoomAltitudeConverter.mapplsZoomToGoogleZoom(zoom),
-            bearing = bearing,
+            bearing = CameraBearing.bearingFromNativeHeading(bearing),
             tilt = pitch,
+            paddings = paddings,
             visibleRegion = null,
+            fov = MAPPLS_VERTICAL_FOV,
         )
     }
 
@@ -104,8 +148,10 @@ internal fun CameraPosition.toMapCameraPosition(logicalTiltHint: Double?): MapCa
     return MapCameraPosition(
         position = originalPosition,
         zoom = originalGoogleZoom,
-        bearing = bear,
+        bearing = CameraBearing.bearingFromNativeHeading(bear),
         tilt = -pitchAbsDeg,
+        paddings = paddings,
         visibleRegion = null,
+        fov = MAPPLS_VERTICAL_FOV,
     )
 }

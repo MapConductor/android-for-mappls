@@ -12,6 +12,8 @@ import com.mapconductor.core.OnMapLoadedHandler
 import com.mapconductor.core.circle.CircleManager
 import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPositionInterface
+import com.mapconductor.core.map.MapPaddings
+import com.mapconductor.core.map.MapViewStyle
 import com.mapconductor.core.map.MutableMapServiceRegistry
 import com.mapconductor.core.marker.MarkerEventControllerInterface
 import com.mapconductor.core.marker.MarkerManager
@@ -32,7 +34,8 @@ import com.mapconductor.mappls.marker.MapplsMarkerController
 import com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer
 import com.mapconductor.mappls.marker.MarkerDragLayer
 import com.mapconductor.mappls.marker.MarkerLayer
-import com.mapconductor.mappls.polygon.MapplsPolygonConductor
+import com.mapconductor.mappls.polygon.MapplsPolygonCompositeRenderer
+import com.mapconductor.mappls.polygon.MapplsPolygonController
 import com.mapconductor.mappls.polygon.MapplsPolygonLayer
 import com.mapconductor.mappls.polygon.MapplsPolygonOverlayRenderer
 import com.mapconductor.mappls.polyline.MapplsPolylineController
@@ -65,6 +68,15 @@ fun MapplsMapView(
     onCameraMoveStart: OnCameraMoveHandler? = null,
     onCameraMove: OnCameraMoveHandler? = null,
     onCameraMoveEnd: OnCameraMoveHandler? = null,
+    /**
+     * How the map looks, when the app states it rather than naming a design.
+     *
+     * A vector style *is* the basemap. `com.mapconductor:vectorstyle` builds
+     * one; what happens underneath depends on this backend and the app does
+     * not have to know.
+     */
+    style: MapViewStyle? = null,
+    onStyleDiagnostics: ((List<String>) -> Unit)? = null,
     content: (@Composable MapplsMapViewScope.() -> Unit)? = null,
 ) {
     val context = LocalContext.current
@@ -78,7 +90,8 @@ fun MapplsMapView(
         modifier = modifier,
         viewProvider = {
             val cameraPosition =
-                state.cameraPosition.toCameraPosition()
+                // パディングはネイティブに渡さない。接続時の moveCamera が中心のずらしで適用する。
+                state.cameraPosition.copy(paddings = MapPaddings.Zeros).toCameraPosition(context.resources.displayMetrics.density)
             val mapInitOptions =
                 MapplsMapOptions
                     .createFromAttributes(context)
@@ -175,6 +188,13 @@ fun MapplsMapView(
         // Pass content if it needs to be rendered within the overlay providers in MapViewBase,
         // or handle it here if it's specific to MapplsMapView structure before calling MapViewBase.
         // For now, assuming content relates to overlay definitions.
+        style = style,
+        onStyleDiagnostics = onStyleDiagnostics,
+        // Never started (onStart is not called), so it is not stopped either --
+        // MapView.onStop() would deactivate the shared FileSource the next map
+        // still uses. Destroying it ends the render thread, whose camera
+        // listeners otherwise keep the controller and every overlay alive.
+        onDestroyMapView = { mapView -> mapView.onDestroy() },
         content = content, // This might need adjustment based on how overlays are handled
     )
 }
@@ -290,7 +310,7 @@ fun getPolylineController(holder: MapplsMapViewHolderInterface): MapplsPolylineC
     return controller
 }
 
-fun getPolygonController(holder: MapplsMapViewHolderInterface): MapplsPolygonConductor {
+fun getPolygonController(holder: MapplsMapViewHolderInterface): MapplsPolygonController {
     val polylineLayer =
         MapplsPolylineLayer(
             sourceId = "polygon-outline-source",
@@ -317,9 +337,12 @@ fun getPolygonController(holder: MapplsMapViewHolderInterface): MapplsPolygonCon
             holder = holder,
         )
 
-    return MapplsPolygonConductor(
-        polygonOverlay = polygonOverlayRenderer,
-        polylineOverlay = polylineOverlayRenderer,
+    return MapplsPolygonController(
+        renderer =
+            MapplsPolygonCompositeRenderer(
+                fill = polygonOverlayRenderer,
+                outline = polylineOverlayRenderer,
+            ),
     )
 }
 

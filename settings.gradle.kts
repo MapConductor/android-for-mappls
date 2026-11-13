@@ -46,4 +46,3 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "android-for-mappls"
-

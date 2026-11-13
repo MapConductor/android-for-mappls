@@ -8,6 +8,7 @@ import com.mapconductor.compose.map.BaseMapViewSaver
 import com.mapconductor.core.map.MapCameraPosition
 import com.mapconductor.core.map.MapCameraPositionInterface
 import com.mapconductor.core.map.MapViewState
+import com.mapconductor.core.map.MapViewStateBundle
 import com.mapconductor.core.map.MapViewStateInterface
 import java.util.UUID
 import android.os.Bundle
@@ -20,7 +21,10 @@ class MapplsViewState(
     cameraPosition: MapCameraPosition = MapCameraPosition.Default,
 ) : MapViewState<MapplsMapDesignTypeInterface>(cameraPosition),
     MapplsViewStateInterface {
-    private var controller: MapplsViewControllerInterface? = null
+    // Read through the base so that letting go of the controller there (MapViewBase
+    // does it when the map is torn down) leaves nothing behind here.
+    private val controller: MapplsViewControllerInterface?
+        get() = attachedMapController as? MapplsViewControllerInterface
     private var _mapDesignType: MapplsMapDesignTypeInterface = mapDesignType
 
     override var mapDesignType: MapplsMapDesignTypeInterface
@@ -31,7 +35,6 @@ class MapplsViewState(
         get() = _mapDesignType
 
     internal fun setController(controller: MapplsViewControllerInterface) {
-        this.controller = controller
         attachController(controller)
     }
 
@@ -53,7 +56,10 @@ class MapplsMapViewSaver : BaseMapViewSaver<MapplsViewState>() {
         state: MapplsViewState,
         bundle: Bundle,
     ) {
-        bundle.putString("styleName", state.mapDesignType.styleName)
+        val design = state.mapDesignType
+        bundle.putString("id", design.id)
+        bundle.putString("styleName", design.styleName)
+        MapViewStateBundle.putAttributionRules(bundle, design.attributionRules)
     }
 
     override fun createState(
@@ -71,6 +77,7 @@ class MapplsMapViewSaver : BaseMapViewSaver<MapplsViewState>() {
                     styleName =
                         mapDesignBundle?.getString("styleName")
                             ?: MapplsDesign.Default.styleName,
+                    attributionRules = MapViewStateBundle.getAttributionRules(mapDesignBundle),
                 ),
             cameraPosition = cameraPosition,
         )

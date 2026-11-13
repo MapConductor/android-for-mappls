@@ -1,5 +1,8 @@
 package com.mapconductor.mappls
 
+import com.mapconductor.core.circle.CIRCLE_TILE_LAYER_ID
+import com.mapconductor.core.circle.CircleTiler
+import com.mapconductor.core.circle.circleTileRasterLayerState
 import com.mapconductor.core.circle.OnCircleEventHandler
 import com.mapconductor.core.controller.BaseMapViewController
 import com.mapconductor.core.features.GeoPointInterface
@@ -7,6 +10,8 @@ import com.mapconductor.core.features.GeoRectBounds
 import com.mapconductor.core.groundimage.OnGroundImageEventHandler
 import com.mapconductor.core.map.CameraRestriction
 import com.mapconductor.core.map.MapCameraPosition
+import com.mapconductor.core.map.MapPaddings
+import com.mapconductor.core.map.MapPaddingsInterface
 import com.mapconductor.core.map.MapUISettings
 import com.mapconductor.core.marker.DefaultMarkerEventController
 import com.mapconductor.core.marker.MarkerAnimationOverlayHost
@@ -17,15 +22,21 @@ import com.mapconductor.core.marker.OnMarkerEventHandler
 import com.mapconductor.core.marker.StrategyMarkerController
 import com.mapconductor.core.marker.dispatchGeoMarkerClick
 import com.mapconductor.core.polygon.OnPolygonEventHandler
+import com.mapconductor.core.polygon.POLYGON_TILE_LAYER_ID
 import com.mapconductor.core.polygon.PolygonState
+import com.mapconductor.core.polygon.PolygonTiler
+import com.mapconductor.core.polygon.polygonTileRasterLayerState
 import com.mapconductor.core.polyline.OnPolylineEventHandler
+import com.mapconductor.core.polyline.POLYLINE_TILE_LAYER_ID
+import com.mapconductor.core.polyline.PolylineTiler
+import com.mapconductor.core.polyline.polylineTileRasterLayerState
 import com.mapconductor.mappls.circle.MapplsCircleController
 import com.mapconductor.mappls.groundimage.MapplsGroundImageController
 import com.mapconductor.mappls.marker.MapplsMarkerController
 import com.mapconductor.mappls.marker.MapplsMarkerOverlayRenderer
 import com.mapconductor.mappls.marker.MarkerDragLayer
 import com.mapconductor.mappls.marker.MarkerLayer
-import com.mapconductor.mappls.polygon.MapplsPolygonConductor
+import com.mapconductor.mappls.polygon.MapplsPolygonController
 import com.mapconductor.mappls.polyline.MapplsPolylineController
 import com.mapconductor.mappls.raster.MapplsRasterLayerController
 import com.mappls.sdk.gestures.MoveGestureDetector
@@ -47,7 +58,7 @@ class MapplsViewController(
     override val holder: MapplsMapViewHolderInterface,
     internal val markerController: MapplsMarkerController,
     internal val polylineController: MapplsPolylineController,
-    internal val polygonController: MapplsPolygonConductor,
+    internal val polygonController: MapplsPolygonController,
     internal val groundImageController: MapplsGroundImageController,
     internal val circleController: MapplsCircleController,
     internal val rasterLayerController: MapplsRasterLayerController,
@@ -75,6 +86,9 @@ class MapplsViewController(
     internal var markerAnimateEndListener: OnMarkerEventHandler? = null
 
     internal var lastLogicalCameraPosition: MapCameraPosition? = null
+
+    /** アプリが指定したパディング（dp）。ネイティブには渡さず、中心のずらしで再現する。 */
+    internal var cameraPaddings: MapPaddingsInterface = MapPaddings.Zeros
 
     init {
         // Style should already be loaded by holderProvider
@@ -105,6 +119,43 @@ class MapplsViewController(
                 markerTileLayers.forEach { entity -> rasterLayerController.removeById(entity.state.id) }
             }
         }
+
+        // Many polygons are drawn as raster tiles, shown through the same RasterLayer
+        // controller as the marker tiles (upsert / removeById, never the app's layers).
+        polygonController.tiler =
+            PolygonTiler().apply {
+                onTemplate = { template, tileSize ->
+                    if (template != null) {
+                        rasterLayerController.upsert(polygonTileRasterLayerState(template, tileSize))
+                    } else {
+                        rasterLayerController.removeById(POLYGON_TILE_LAYER_ID)
+                    }
+                }
+            }
+
+        // Many circles too: the same raster layer path, in the circle band.
+        circleController.tiler =
+            CircleTiler().apply {
+                onTemplate = { template, tileSize ->
+                    if (template != null) {
+                        rasterLayerController.upsert(circleTileRasterLayerState(template, tileSize))
+                    } else {
+                        rasterLayerController.removeById(CIRCLE_TILE_LAYER_ID)
+                    }
+                }
+            }
+
+        // Many polylines too: the same raster layer path, in the polyline band.
+        polylineController.tiler =
+            PolylineTiler().apply {
+                onTemplate = { template, tileSize ->
+                    if (template != null) {
+                        rasterLayerController.upsert(polylineTileRasterLayerState(template, tileSize))
+                    } else {
+                        rasterLayerController.removeById(POLYLINE_TILE_LAYER_ID)
+                    }
+                }
+            }
     }
 
     fun setupListeners() {
@@ -128,6 +179,8 @@ class MapplsViewController(
         groundImageController.clear()
         circleController.clear()
         rasterLayerController.clear()
+        // 拡張モジュール（クラスタリングなど）が登録した Strategy のマーカーも消す。
+        clearStrategyMarkerControllers()
     }
 
     override fun moveCamera(position: MapCameraPosition) = handleMoveCamera(position)
@@ -337,19 +390,14 @@ class MapplsViewController(
         styleInstance?.let { style ->
             renderer.ensureDefaultIcon(style)
             ensureGeoJsonSource(style, renderer.markerLayer.sourceId)
-            addLayerAboveSafely(
-                style = style,
-                layer = renderer.markerLayer.layer,
-                layerId = renderer.markerLayer.layerId,
-                aboveId = polylineController.renderer.layer.layerId,
+            MapplsOverlayStacking.add(
+                holder.map,
+                style,
+                renderer.markerLayer.layer,
+                MapplsOverlayStacking.key(com.mapconductor.core.controller.OverlayKind.Marker),
             )
             ensureGeoJsonSource(style, renderer.dragLayer.sourceId)
-            addLayerAboveSafely(
-                style = style,
-                layer = renderer.dragLayer.layer,
-                layerId = renderer.dragLayer.layerId,
-                aboveId = renderer.markerLayer.layerId,
-            )
+            MapplsOverlayStacking.add(holder.map, style, renderer.dragLayer.layer, MapplsOverlayStacking.MARKER_DRAG)
             renderer.redraw()
             renderer.drawDragLayer()
         }
